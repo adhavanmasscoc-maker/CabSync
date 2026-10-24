@@ -604,6 +604,45 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
   </div>
 </div>
 
+<!-- ==================== FIREBASE SDK INITIALIZATION ==================== -->
+<script>
+window.firebaseConfig = {
+  apiKey: "AIzaSyBp5c7M_NMJXJdqMoj4eDLCOuJ0NM3RIIA",
+  authDomain: "cabsync-cit.firebaseapp.com",
+  projectId: "cabsync-cit",
+  storageBucket: "cabsync-cit.firebasestorage.app",
+  messagingSenderId: "786834299683",
+  appId: "1:786834299683:web:199332b2e80ca94c598a96",
+  measurementId: "G-LBVBK5NDGV"
+};
+</script>
+<script type="module">
+if (window.location.protocol.startsWith("http")) {
+  try {
+    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
+    const { getAnalytics, isSupported } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js");
+    const { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
+    const { getFirestore } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+
+    const app = initializeApp(window.firebaseConfig);
+    isSupported().then(ok => { if (ok) getAnalytics(app); }).catch(() => {});
+    window.firebaseAuth = getAuth(app);
+    window.firebaseDb = getFirestore(app);
+    window.googleProvider = new GoogleAuthProvider();
+    window.googleProvider.setCustomParameters({ prompt: "select_account", hd: "citchennai.net" });
+    window.signInWithPopup = signInWithPopup;
+    window.signOut = signOut;
+
+    onAuthStateChanged(window.firebaseAuth, user => {
+      if (user && user.email && user.email.endsWith("@citchennai.net") && window.handleAuthSuccess) {
+        window.handleAuthSuccess(user.email, user.displayName);
+      }
+    });
+  } catch (err) {
+    console.warn("Firebase HTTP load note:", err);
+  }
+}
+</script>
 <script>
 /* ============ CONFIGURATION ============ */
 const DOMAIN = "@citchennai.net";
@@ -735,8 +774,37 @@ function parseEmail(email) {
   return { name: rawName, dept, batch, yr: Math.min(4, Math.max(1, NOW_YEAR - batch + 1)), email };
 }
 
-$("loginBtn").onclick = () => {
+function handleAuthSuccess(email, displayName) {
+  state.user = parseEmail(email);
+  if (displayName) state.user.name = displayName;
+  const u = state.user;
+  $("meAv").outerHTML = avatar(u.name, 0, 44).replace('class="av"', 'class="av" id="meAv"');
+  $("meName").textContent = u.name;
+  $("meInfo").textContent = `${u.dept} · ${ordinal(u.yr)} Year (Batch ${u.batch})`;
+  show("s-home");
+  toast("Welcome, " + u.name + " 👋");
+}
+window.handleAuthSuccess = handleAuthSuccess;
+
+$("loginBtn").onclick = async () => {
   $("loginErr").textContent = "";
+
+  if (window.firebaseAuth && window.googleProvider && window.signInWithPopup) {
+    try {
+      const result = await window.signInWithPopup(window.firebaseAuth, window.googleProvider);
+      const user = result.user;
+      if (!user.email || !user.email.endsWith(DOMAIN)) {
+        if (window.signOut) await window.signOut(window.firebaseAuth);
+        $("loginErr").textContent = "Blocked: only " + DOMAIN + " Google accounts are allowed.";
+        return;
+      }
+      handleAuthSuccess(user.email, user.displayName);
+      return;
+    } catch (err) {
+      console.warn("Firebase popup sign-in note:", err);
+    }
+  }
+
   [1, 2, 3, 4].forEach((n, i) => $("a" + n).innerHTML = avatar("acct", i, 40));
   $("acctOv").classList.add("on");
 };
@@ -748,16 +816,17 @@ document.querySelectorAll(".acct").forEach(b => b.onclick = () => {
     $("loginErr").textContent = "Blocked: only " + DOMAIN + " Google accounts are allowed.";
     return;
   }
-  state.user = parseEmail(e);
-  const u = state.user;
-  $("meAv").outerHTML = avatar(u.name, 0, 44).replace('class="av"', 'class="av" id="meAv"');
-  $("meName").textContent = u.name;
-  $("meInfo").textContent = `${u.dept} · ${ordinal(u.yr)} Year (Batch ${u.batch})`;
-  show("s-home");
-  toast("Welcome, " + u.name + " 👋");
+  handleAuthSuccess(e);
 });
 
-$("logout").onclick = () => { state.user = null; state.joined = false; show("s-login"); };
+$("logout").onclick = async () => {
+  if (window.firebaseAuth && window.signOut) {
+    try { await window.signOut(window.firebaseAuth); } catch (_) {}
+  }
+  state.user = null;
+  state.joined = false;
+  show("s-login");
+};
 
 /* ============ SEARCH FORM ============ */
 const myPts = () => state.t * 2 + state.b;
