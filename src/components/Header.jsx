@@ -33,15 +33,8 @@ export default function Header({
     <header className="app-header">
       {/* 1. Minimal, Clean Top-Left App Logo & Title */}
       <div className="brand-lockup" onClick={scrollToTop} role="button" tabIndex={0} aria-label="CIT CabSync home">
-        <span className="logo-bracket-btn" aria-hidden="true">
-          <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
-            {/* Google Blue < */}
-            <path d="M9.5 7.5L3.5 14L9.5 20.5" stroke="#4285F4" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-            {/* Google Red & Yellow / */}
-            <path d="M12 21.5L16 6.5" stroke="#EA4335" strokeWidth="2.8" strokeLinecap="round"/>
-            {/* Google Green > */}
-            <path d="M18.5 7.5L24.5 14L18.5 20.5" stroke="#34A853" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+        <span className="logo-bracket-btn" aria-hidden="true" style={{ padding: "2px" }}>
+          <img src="/cabsync.svg" alt="CIT CabSync Logo" width="24" height="24" style={{ borderRadius: "6px", display: "block" }} />
         </span>
         <span className="brand-title">CIT CabSync</span>
       </div>
