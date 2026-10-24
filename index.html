@@ -613,7 +613,11 @@ if (window.location.protocol.startsWith("http")) {
     const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
     const { getAnalytics, isSupported } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js");
     const { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
-    const { getFirestore } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+    const {
+      getFirestore, doc, collection, onSnapshot, runTransaction,
+      setDoc, updateDoc, addDoc, getDoc, getDocs, query, where,
+      serverTimestamp, orderBy
+    } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
 
     const app = initializeApp(window.firebaseConfig);
     isSupported().then(ok => { if (ok) getAnalytics(app); }).catch(() => {});
@@ -624,9 +628,15 @@ if (window.location.protocol.startsWith("http")) {
     window.signInWithPopup = signInWithPopup;
     window.signOut = signOut;
 
+    window.firebaseFs = {
+      doc, collection, onSnapshot, runTransaction,
+      setDoc, updateDoc, addDoc, getDoc, getDocs, query, where,
+      serverTimestamp, orderBy
+    };
+
     onAuthStateChanged(window.firebaseAuth, user => {
       if (user && user.email && user.email.endsWith("@citchennai.net") && window.handleAuthSuccess) {
-        window.handleAuthSuccess(user.email, user.displayName);
+        window.handleAuthSuccess(user.email, user.displayName, user.uid);
       }
     });
   } catch (err) {
@@ -765,15 +775,31 @@ function parseEmail(email) {
   return { name: rawName, dept, batch, yr: Math.min(4, Math.max(1, NOW_YEAR - batch + 1)), email };
 }
 
-function handleAuthSuccess(email, displayName) {
+function handleAuthSuccess(email, displayName, uid) {
   state.user = parseEmail(email);
   if (displayName) state.user.name = displayName;
+  if (uid) state.user.uid = uid;
   const u = state.user;
   $("meAv").outerHTML = avatar(u.name, 0, 44).replace('class="av"', 'class="av" id="meAv"');
   $("meName").textContent = u.name;
   $("meInfo").textContent = `${u.dept} · ${ordinal(u.yr)} Year (Batch ${u.batch})`;
   show("s-home");
   toast("Welcome, " + u.name + " 👋");
+
+  // Sync profile document to Cloud Firestore
+  if (window.firebaseDb && window.firebaseFs && u.uid) {
+    try {
+      const { doc, setDoc, serverTimestamp } = window.firebaseFs;
+      setDoc(doc(window.firebaseDb, "users", u.uid), {
+        uid: u.uid,
+        name: u.name,
+        email: u.email,
+        department: u.dept,
+        batchYear: u.batch,
+        lastActive: serverTimestamp()
+      }, { merge: true }).catch(err => console.info("Firestore profile sync notice:", err));
+    } catch (_) {}
+  }
 }
 window.handleAuthSuccess = handleAuthSuccess;
 
@@ -789,7 +815,7 @@ $("loginBtn").onclick = async () => {
         $("loginErr").textContent = "Blocked: only " + DOMAIN + " Google accounts are allowed.";
         return;
       }
-      handleAuthSuccess(user.email, user.displayName);
+      handleAuthSuccess(user.email, user.displayName, user.uid);
       return;
     } catch (err) {
       console.warn("Firebase popup sign-in note:", err);
@@ -956,7 +982,10 @@ function joinTransaction(L, pax) {
   L.pax.push(pax);
 }
 
-$("find").onclick = () => {
+let unsubscribeRide = null;
+let unsubscribeChat = null;
+
+$("find").onclick = async () => {
   const pts = myPts();
   if (pts < 1) { $("homeErr").textContent = "Add at least one bag."; return; }
   $("homeErr").textContent = "";
@@ -971,7 +1000,136 @@ $("find").onclick = () => {
       { name: "Kavin", dept: "IT", yr: 1, pts: 1, votes: 0, hasMyVote: false }
     ]
   };
-  try { joinTransaction(L, { name: u.name, dept: u.dept, yr: u.yr, pts, me: true, votes: 0 }); }
+
+  const myPax = {
+    uid: u.uid || "cit-user-" + Date.now(),
+    name: u.name,
+    dept: u.dept,
+    yr: u.yr,
+    pts,
+    me: true,
+    votes: 0,
+    hasMyVote: false
+  };
+
+  // Live Firestore database synchronization
+  if (window.firebaseDb && window.firebaseFs && window.location.protocol.startsWith("http")) {
+    const { doc, collection, onSnapshot, runTransaction, setDoc, query, where, getDocs, serverTimestamp, orderBy } = window.firebaseFs;
+    const db = window.firebaseDb;
+    try {
+      const ridesRef = collection(db, "rides");
+      const q = query(
+        ridesRef,
+        where("direction", "==", L.dir),
+        where("destination", "==", L.dest),
+        where("status", "==", "OPEN")
+      );
+      const snapshot = await getDocs(q);
+      let matchedDoc = null;
+
+      for (const d of snapshot.docs) {
+        const data = d.data();
+        const maxLug = data.maxLuggageUnits || 7;
+        const maxPax = data.maxPassengers || 4;
+        if ((data.currentLuggageUnits || 0) + pts <= maxLug && (data.currentPassengers || 0) + 1 <= maxPax) {
+          matchedDoc = d;
+          break;
+        }
+      }
+
+      let rideId;
+      if (matchedDoc) {
+        rideId = matchedDoc.id;
+        const rideRef = doc(db, "rides", rideId);
+        await runTransaction(db, async (txn) => {
+          const snap = await txn.get(rideRef);
+          if (!snap.exists()) throw new Error("Ride not found");
+          const rData = snap.data();
+          const curLug = rData.currentLuggageUnits || 0;
+          const curP = rData.currentPassengers || 0;
+          const maxL = rData.maxLuggageUnits || 7;
+          const maxP = rData.maxPassengers || 4;
+
+          if (curLug + pts > maxL) throw new Error(`Luggage overload. Available: ${maxL - curLug} pts.`);
+          if (curP + 1 > maxP) throw new Error("Vehicle is full.");
+
+          const newPax = [...(rData.pax || []), myPax];
+          const newLug = curLug + pts;
+          const newP = curP + 1;
+          txn.update(rideRef, {
+            pax: newPax,
+            currentLuggageUnits: newLug,
+            currentPassengers: newP,
+            status: (newP >= maxP || newLug >= maxL) ? "FULL" : "OPEN",
+            updatedAt: serverTimestamp()
+          });
+        });
+      } else {
+        const newRef = doc(ridesRef);
+        rideId = newRef.id;
+        await setDoc(newRef, {
+          rideId,
+          leaderUid: u.uid || "anon",
+          leaderName: u.name,
+          destination: L.dest,
+          direction: L.dir,
+          departureDate: L.date,
+          departureTime: L.time,
+          vehicleType: L.car.n,
+          maxLuggageUnits: L.car.max,
+          currentLuggageUnits: pts,
+          maxPassengers: 4,
+          currentPassengers: 1,
+          status: "OPEN",
+          isFemaleOnly: L.fem,
+          pax: [myPax],
+          createdAt: serverTimestamp()
+        });
+      }
+
+      L.rideId = rideId;
+      state.lobby = L;
+
+      // Real-time listener on ride document
+      if (unsubscribeRide) unsubscribeRide();
+      unsubscribeRide = onSnapshot(doc(db, "rides", rideId), (snap) => {
+        if (snap.exists()) {
+          const rData = snap.data();
+          state.lobby.pax = (rData.pax || []).map(p => ({
+            ...p,
+            me: (u.uid && p.uid === u.uid) || p.name === u.name
+          }));
+          render();
+        }
+      });
+
+      // Real-time listener on messages subcollection
+      if (unsubscribeChat) unsubscribeChat();
+      const msgsRef = collection(db, "rides", rideId, "messages");
+      const msgsQ = query(msgsRef, orderBy("createdAt", "asc"));
+      unsubscribeChat = onSnapshot(msgsQ, (snap) => {
+        chatEl.innerHTML = "";
+        if (snap.empty) {
+          addMsg("Nisha", "Hi all! I'll book the cab and pin my GPay QR here.");
+        } else {
+          snap.forEach(d => {
+            const m = d.data();
+            addMsg(m.senderName, m.text, (u.uid && m.senderUid === u.uid) || m.senderName === u.name);
+          });
+        }
+      });
+
+      render();
+      show("s-lobby");
+      toast("Joined live Firestore lobby ✓");
+      return;
+    } catch (err) {
+      console.warn("Firestore live lobby fallback to simulated lobby:", err);
+    }
+  }
+
+  // Local simulated fallback
+  try { joinTransaction(L, myPax); }
   catch (e) { $("homeErr").textContent = e.message; return; }
 
   state.lobby = L;
@@ -983,7 +1141,7 @@ $("find").onclick = () => {
   state.sim = setTimeout(() => {
     if (!state.lobby) return;
     try {
-      joinTransaction(state.lobby, { name: "Divya", dept: "ECE", yr: 2, pts: 1, isNew: true, votes: 0 });
+      joinTransaction(state.lobby, { name: "Divya", dept: "ECE", yr: 2, pts: 1, isNew: true, votes: 0, hasMyVote: false });
       render();
       toast("Divya just joined the ride");
     } catch (e) {
@@ -992,7 +1150,13 @@ $("find").onclick = () => {
   }, 4500);
 };
 
-$("back").onclick = () => { clearTimeout(state.sim); state.lobby = null; show("s-home"); };
+$("back").onclick = () => {
+  if (unsubscribeRide) { unsubscribeRide(); unsubscribeRide = null; }
+  if (unsubscribeChat) { unsubscribeChat(); unsubscribeChat = null; }
+  clearTimeout(state.sim);
+  state.lobby = null;
+  show("s-home");
+};
 
 /* ============ VOTE OUT MODERATION ============ */
 function renderVoteList() {
@@ -1081,9 +1245,26 @@ $("payBar").onclick = () => {
   render();
 };
 
-function send() {
+async function send() {
   const v = $("msg").value.trim();
   if (!v) return;
+
+  if (state.lobby && state.lobby.rideId && window.firebaseDb && window.firebaseFs) {
+    try {
+      const { collection, addDoc, serverTimestamp } = window.firebaseFs;
+      await addDoc(collection(window.firebaseDb, "rides", state.lobby.rideId, "messages"), {
+        senderUid: (state.user && state.user.uid) || "anon",
+        senderName: state.user.name,
+        text: v,
+        createdAt: serverTimestamp()
+      });
+      $("msg").value = "";
+      return;
+    } catch (e) {
+      console.warn("Firestore message send fallback:", e);
+    }
+  }
+
   addMsg(state.user.name, v, true);
   $("msg").value = "";
 }
