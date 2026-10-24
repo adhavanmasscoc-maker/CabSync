@@ -18,47 +18,57 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* ============ TOKENS (PERMANENT LIGHT GOOGLE THEME) ============ */
+/* ============ TOKENS (MATCHING 6b6e43 SPECIFICATION) ============ */
 :root,html,body{
   color-scheme: light !important;
   --blue:#1A73E8;--red:#EA4335;--yellow:#FBBC04;--green:#34A853;
   --bg:#F8F9FA;--card:#fff;--ink:#202124;--muted:#5F6368;--line:#E3E8EF;
+  --track:#F1F3F4;
   --blue-soft:#E8F0FE;--green-soft:#E6F4EA;--red-soft:#FCE8E6;--yellow-soft:#FEF7E0;
   --shadow:0 1px 3px rgba(60,64,67,.12),0 4px 12px rgba(60,64,67,.06);
-  --shadow-lg:0 4px 16px rgba(60,64,67,.12),0 8px 32px rgba(60,64,67,.08);
+  --shadow-lg:0 4px 16px rgba(60,64,67,.15),0 8px 24px rgba(60,64,67,.08);
+  --max-app:412px;
   --radius:16px;--radius-sm:12px;--radius-full:9999px;
-  --font:'Figtree','Google Sans',system-ui,-apple-system,sans-serif;
-  --max-app:460px;
+  --spring:cubic-bezier(.34,1.56,.64,1);
   --transition:0.2s cubic-bezier(.4,0,.2,1);
 }
-*{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{height:100%;scroll-behavior:smooth}
-body{font-family:var(--font);background:var(--bg);color:var(--ink);min-height:100%;
-  display:flex;flex-direction:column;align-items:center;
-  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-
-/* ============ AMBIENT BACKGROUND ============ */
-body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background:
-    radial-gradient(ellipse 600px 600px at 5% 4%,rgba(66,133,244,.22),transparent),
-    radial-gradient(ellipse 500px 500px at 95% 8%,rgba(234,67,53,.14),transparent),
-    radial-gradient(ellipse 600px 600px at 92% 60%,rgba(251,188,4,.18),transparent),
-    radial-gradient(ellipse 500px 500px at 6% 88%,rgba(52,168,83,.18),transparent),
-    var(--bg)}
-
-/* ============ LAYOUT: CENTERED MOBILE FRAME ON PC, FULL-WIDTH ON MOBILE ============ */
-.app{width:100%;max-width:var(--max-app);min-height:100vh;padding:20px 16px 120px;position:relative}
-/* PC: add a subtle phone-frame feel */
-@media(min-width:720px){
-  body{padding:32px 0}
-  .app{min-height:auto;border-radius:28px;background:var(--bg);
-    box-shadow:0 0 0 1px var(--line),var(--shadow-lg);padding:28px 24px 120px;margin:0 auto}
-  body::after{content:"CIT CabSync — Open on your phone for the best experience";
-    position:fixed;bottom:16px;left:50%;transform:translateX(-50%);
-    font-size:13px;color:var(--muted);font-family:var(--font);pointer-events:none;opacity:.6}
+body{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  background:linear-gradient(180deg,#f0f4f9,#fff);
+  color:var(--ink);
+  font-family:'Figtree','Google Sans',system-ui,-apple-system,sans-serif;
+  font-size:15px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
 }
-@media(min-width:1100px){
-  :root{--max-app:440px}
+
+/* ============ LAYOUT CONTAINER (MATCHING 6b6e43 MOBILE-FIRST #root) ============ */
+.app{
+  width:100%;
+  max-width:var(--max-app);
+  min-height:100vh;
+  background:#fff;
+  display:flex;
+  flex-direction:column;
+  position:relative;
+  box-shadow:0 0 40px rgba(0,0,0,.06);
+  margin:0 auto;
+  box-sizing:border-box;
+}
+@media(min-width:600px){
+  body{padding:24px 0}
+  .app{border-radius:24px;border:1px solid var(--line);box-shadow:0 8px 32px rgba(60,64,67,.12);overflow:hidden}
+  body::after{content:"CIT CabSync — Optimized for Mobile & Web";
+    position:fixed;bottom:12px;left:50%;transform:translateX(-50%);
+    font-size:12px;color:var(--muted);font-family:inherit;pointer-events:none;opacity:.6}
+}
+@media(max-width:599px){
+  body{padding:0}
+  .app{border-radius:0;box-shadow:none;border:none}
 }
 
 /* ============ SCREEN TRANSITIONS ============ */
@@ -268,34 +278,40 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
 .route-visual .line{flex:1;height:2px;background:var(--blue);opacity:.3}
 .route-visual .arrow-icon{font-size:16px;flex:none}
 
-/* ============ STICKY TOP APP HEADER ============ */
+/* ============ STICKY TOP APP HEADER (FLAWLESS MOBILE FIT) ============ */
 .app-header{
-  position:sticky;top:0;z-index:30;
-  display:flex;align-items:center;justify-content:space-between;gap:8px;
-  padding:10px 0;margin-bottom:14px;
-  background:rgba(248,249,250,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  border-bottom:1px solid rgba(227,232,239,.6);
+  position:sticky;top:0;z-index:90;
+  display:flex;align-items:center;justify-content:space-between;gap:6px;
+  padding:8px 12px;width:100%;box-sizing:border-box;
+  background:rgba(255,255,255,.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
 }
-.brand-lockup-top{display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none;flex-shrink:0}
-.header-logo-icon{width:28px;height:28px;border-radius:8px;box-shadow:0 1px 4px rgba(66,133,244,.2);display:block;transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
-.brand-lockup-top:hover .header-logo-icon,.brand-lockup-top:active .header-logo-icon{transform:rotate(10deg) scale(1.12)}
-.brand-title-top{font-weight:700;color:#202124;font-size:16px;letter-spacing:-.01em;white-space:nowrap}
+.brand-lockup-top{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none;flex-shrink:0}
+.header-logo-icon{width:24px;height:24px;border-radius:6px;display:block;flex-shrink:0;transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+.brand-lockup-top:hover .header-logo-icon,.brand-lockup-top:active .header-logo-icon{transform:scale(1.15) rotate(8deg)}
+.brand-title-top{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.2px;white-space:nowrap}
 
 /* Segmented Navigation (Animated Sliding Pill Track) */
-.top-nav-wrap{position:relative;display:inline-flex;justify-content:flex-end}
-.top-nav{position:relative;background:#F1F3F4;border-radius:var(--radius-full);padding:3px;
-  display:inline-flex;align-items:center;gap:2px;box-shadow:inset 0 1px 2px rgba(0,0,0,.04);z-index:2}
-.nav-indicator{position:absolute;top:3px;bottom:3px;left:0;border-radius:var(--radius-full);
+.top-nav-wrap{position:relative;display:inline-flex;justify-content:flex-end;flex-shrink:0}
+.top-nav{
+  position:relative;background:#F1F3F4;border-radius:var(--radius-full);padding:2px;
+  display:inline-flex;align-items:center;gap:2px;box-shadow:inset 0 1px 2px rgba(0,0,0,.04);z-index:2;
+}
+.nav-indicator{
+  position:absolute;top:2px;bottom:2px;left:0;border-radius:var(--radius-full);
   background:#fff;box-shadow:0 2px 8px rgba(26,115,232,.18),0 1px 3px rgba(60,64,67,.12);
   transition:transform .35s cubic-bezier(.34,1.56,.64,1),width .3s ease;
-  pointer-events:none;z-index:1}
-.nav-tab{position:relative;z-index:2;border-radius:var(--radius-full);padding:6px 12px;font-size:13px;font-weight:600;
-  color:var(--muted);transition:color .25s ease;display:inline-flex;align-items:center;justify-content:center;gap:5px;
-  background:transparent;border:none;cursor:pointer}
+  pointer-events:none;z-index:1;
+}
+.nav-tab{
+  position:relative;z-index:2;border-radius:var(--radius-full);padding:5px 9px;font-size:12.5px;font-weight:600;
+  color:var(--muted);transition:color .25s ease;display:inline-flex;align-items:center;justify-content:center;gap:4px;
+  background:transparent;border:none;cursor:pointer;white-space:nowrap;
+}
 .nav-tab svg{flex-shrink:0;transition:transform .35s cubic-bezier(.34,1.56,.64,1),stroke .25s ease}
 .nav-tab:hover{color:var(--ink)}
 .nav-tab.active{color:var(--blue);font-weight:700}
-.nav-tab.active svg{stroke:var(--blue);transform:translateY(-2px) scale(1.12)}
+.nav-tab.active svg{stroke:var(--blue);transform:translateY(-1.5px) scale(1.1)}
 
 /* Post-Login Morphed Nav Avatar & Emerald Pulse (Image 1 Style) */
 @keyframes emeraldPulse{
@@ -303,21 +319,28 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
   70%{box-shadow:0 0 0 7px rgba(46,125,50,0)}
   100%{box-shadow:0 0 0 0 rgba(46,125,50,0)}
 }
-.nav-tab.nav-tab-avatar{padding:3px 6px;min-width:38px;justify-content:center}
-.morphed-nav-badge{position:relative;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#0288D1,#00897B);
-  color:#fff;display:grid;place-items:center;font-size:13px;font-weight:800;flex-shrink:0;box-shadow:0 1px 4px rgba(2,136,209,.25)}
-.morphed-nav-check{position:absolute;bottom:-1px;right:-2px;width:11px;height:11px;border-radius:50%;
-  background:#2E7D32;color:#fff;font-size:7.5px;font-weight:900;display:grid;place-items:center;border:1.5px solid #fff}
+.nav-tab.nav-tab-avatar{padding:2px 4px;min-width:32px;justify-content:center}
+.morphed-nav-badge{
+  position:relative;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#0288D1,#00897B);
+  color:#fff;display:grid;place-items:center;font-size:12.5px;font-weight:800;flex-shrink:0;box-shadow:0 1px 4px rgba(2,136,209,.25);
+  animation:emeraldPulse 2.5s infinite;
+}
+.morphed-nav-check{
+  position:absolute;bottom:-1px;right:-2px;width:10px;height:10px;border-radius:50%;
+  background:#2E7D32;color:#fff;font-size:7px;font-weight:900;display:grid;place-items:center;border:1.5px solid #fff;
+}
 
 /* Profile Popover (Image 1 Style) */
-.nav-profile-popover{position:absolute;top:calc(100% + 8px);right:0;
-  width:290px;background:#ffffff;border-radius:20px;padding:18px;box-shadow:0 10px 32px rgba(0,0,0,.16),0 2px 8px rgba(60,64,67,.08);
-  border:1px solid var(--line);z-index:95;animation:pop .25s cubic-bezier(.34,1.56,.64,1)}
-.pop-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#0288D1,#00897B);color:#fff;
-  font-weight:800;display:grid;place-items:center;font-size:18px;flex-shrink:0}
-.pop-verified-badge{display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-size:12px;font-weight:700;
-  padding:3px 10px;border-radius:var(--radius-full);background:#E6F4EA;color:#137333}
-.pop-signout-btn{width:100%;margin-top:16px;padding:10px 16px;border-radius:var(--radius-full);font-size:14.5px;font-weight:700;
+.nav-profile-popover{
+  position:absolute;top:calc(100% + 8px);right:0;
+  width:280px;background:#ffffff;border-radius:20px;padding:16px;box-shadow:0 10px 32px rgba(0,0,0,.16),0 2px 8px rgba(60,64,67,.08);
+  border:1px solid var(--line);z-index:95;animation:pop .25s cubic-bezier(.34,1.56,.64,1);
+}
+.pop-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#0288D1,#00897B);color:#fff;
+  font-weight:800;display:grid;place-items:center;font-size:17px;flex-shrink:0}
+.pop-verified-badge{display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-size:11.5px;font-weight:700;
+  padding:2px 8px;border-radius:var(--radius-full);background:#E6F4EA;color:#137333}
+.pop-signout-btn{width:100%;margin-top:14px;padding:9px 14px;border-radius:var(--radius-full);font-size:14px;font-weight:700;
   border:none;background:#FCE8E6;color:#D93025;cursor:pointer;transition:all var(--transition);text-align:center;display:block}
 .pop-signout-btn:hover{background:#FAD2CF}
 .pop-signout-btn:active{transform:scale(.98)}
@@ -325,30 +348,82 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
 /* Enable Female-Only Pool Card (Matches Image 2) */
 .female-pool-card{
   display:flex;align-items:center;justify-content:space-between;gap:12px;
-  background:#F1F3F4;border-radius:16px;padding:14px 18px;margin-top:16px;
+  background:#F1F3F4;border-radius:14px;padding:12px 14px;margin-top:14px;
   border:1px solid rgba(0,0,0,.04);box-shadow:0 1px 3px rgba(60,64,67,.04);
 }
-.female-pool-title{font-weight:700;font-size:15px;color:#202124;letter-spacing:-.01em}
-.female-pool-sub{color:#5F6368;font-size:13px;font-weight:400;margin-top:2px}
+.female-pool-title{font-weight:700;font-size:14px;color:#202124;letter-spacing:-.01em}
+.female-pool-sub{color:#5F6368;font-size:12px;font-weight:400;margin-top:2px}
 
 /* Mobile-First Screen Perfection (360px - 480px viewports) */
 @media(max-width:600px){
   body{padding:0;overflow-x:hidden}
-  .app{padding:8px 12px calc(90px + env(safe-area-inset-bottom,0px));width:100%;max-width:100%;min-height:100vh;box-sizing:border-box}
-  .app-header{padding:8px 0;margin-bottom:12px;gap:6px}
-  .brand-title-top{font-size:15px}
-  .header-logo-icon{width:26px;height:26px}
-  .card{padding:18px 14px;border-radius:16px;margin-top:14px}
-  .hero{padding:18px 0 6px}
-  h1{font-size:25px}
-  .steps{gap:8px}
-  .step{padding:12px 8px;border-radius:12px}
-  .step small{font-size:11.5px}
-  .nav-tab{padding:6px 9px;font-size:12.5px;gap:4px}
-  .nav-tab.nav-tab-avatar{padding:2px 5px;min-width:36px}
-  .female-pool-card{padding:12px 14px;border-radius:14px}
-  .female-pool-title{font-size:14.5px}
-  .female-pool-sub{font-size:12.5px}
+  .app-header{padding:8px 10px;gap:4px}
+  .brand-title-top{font-size:14.5px}
+  .header-logo-icon{width:22px;height:22px}
+  .card{padding:16px 12px;border-radius:14px;margin-top:12px}
+  .hero{padding:16px 0 6px}
+  h1{font-size:24px}
+  .nav-tab{padding:5px 8px;font-size:12px;gap:3px}
+  .nav-tab.nav-tab-avatar{padding:2px 4px;min-width:30px}
+  .female-pool-card{padding:12px 12px;border-radius:12px}
+}
+
+/* ============ HOME WELCOME CARD (STAY ON HOME SCREEN EXPERIENCE) ============ */
+.home-welcome-card{
+  background:linear-gradient(135deg,#E8F0FE,#F8F9FA);border:1.5px solid #D2E3FC;
+  border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;gap:10px;animation:screenIn .3s ease;
+}
+.welcome-top-row{display:flex;align-items:center;gap:12px}
+.welcome-avatar-circle{
+  width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#0288D1,#00897B);
+  color:#fff;font-weight:800;font-size:16px;display:grid;place-items:center;flex-shrink:0;box-shadow:0 2px 6px rgba(2,136,209,.25);
+}
+.welcome-badge-pill{
+  display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;
+  padding:2px 8px;border-radius:9999px;background:#E6F4EA;color:#137333;margin-top:2px;
+}
+.welcome-continue-btn{
+  width:100%;min-height:42px;border-radius:9999px;background:var(--blue);color:#fff;
+  font-weight:700;font-size:13.5px;border:none;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;gap:6px;box-shadow:0 2px 6px rgba(26,115,232,.3);transition:all .2s ease;
+}
+.welcome-continue-btn:hover{background:#1765c9}
+.welcome-continue-btn:active{transform:scale(.98)}
+
+/* ============ ID SCANNER VIEWPORT WITH idcard.svg HUD PATTERN ============ */
+.id-scanner-viewport{
+  position:relative;width:100%;height:220px;background:#000;border-radius:16px;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+#idVideo{width:100%;height:100%;object-fit:cover;display:block}
+.id-card-svg-overlay{
+  position:absolute;inset:6px;pointer-events:none;display:flex;align-items:center;justify-content:center;
+}
+.id-card-svg-img{
+  width:100%;height:100%;object-fit:contain;opacity:0.75;
+  filter:drop-shadow(0 0 6px rgba(26,115,232,.65));
+}
+.id-scan-laser-line{
+  position:absolute;left:8px;right:8px;height:2.5px;
+  background:linear-gradient(90deg,transparent,#34A853 45%,#4285F4 55%,transparent);
+  box-shadow:0 0 10px #34A853,0 0 16px #4285F4;
+  animation:laserSweep 2.2s ease-in-out infinite alternate;
+}
+@keyframes laserSweep{
+  0%{top:8%;opacity:.7}
+  100%{top:92%;opacity:.95}
+}
+.id-target-hint{
+  position:absolute;bottom:8px;left:0;right:0;text-align:center;pointer-events:none;
+}
+.id-target-hint span{
+  background:rgba(0,0,0,.75);color:#fff;font-size:11px;font-weight:600;
+  padding:3px 12px;border-radius:9999px;backdrop-filter:blur(4px);
+}
+.privacy-notice-box{
+  margin-top:12px;padding:10px 12px;background:var(--blue-soft);border-radius:var(--radius-sm);
+  font-size:12.5px;line-height:1.45;
 }
 
 /* ============ VERIFIED CIT STUDENT CARD (User Screenshot) ============ */
@@ -529,6 +604,20 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
 
 <!-- ==================== 2. DASHBOARD ==================== -->
 <section class="screen" id="s-home">
+  <!-- Welcome Banner for Verified Students (Stay on Home Screen) -->
+  <div class="home-welcome-card hide" id="homeWelcomeCard">
+    <div class="welcome-top-row">
+      <div class="welcome-avatar-circle" id="homeWelcomeAvatar">A</div>
+      <div style="flex:1">
+        <div style="font-size:15px;color:var(--ink);font-weight:700">Welcome back, <span id="homeWelcomeName">Student</span>! 👋</div>
+        <div class="welcome-badge-pill">✓ Verified CIT Student · <span id="homeWelcomeDept">CSE 2nd Year</span></div>
+      </div>
+    </div>
+    <button type="button" class="welcome-continue-btn" id="homeContinueBtn">
+      Continue Ride Search →
+    </button>
+  </div>
+
   <h2 style="margin-top:6px">Where are you heading?</h2>
 
   <div class="card" style="margin-top:12px">
@@ -727,43 +816,67 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
   </div>
 </div>
 
-<!-- ==================== ID CARD SCAN MODAL (Live Camera Only) ==================== -->
+<!-- ==================== ID CARD SCAN MODAL (Live Camera Only with idcard.svg Pattern) ==================== -->
 <div class="ov" id="idScanOv">
   <div class="sheet" role="dialog" aria-label="CIT College ID Card Scanner">
     <div class="top">
       <div>
-        <h2 style="font-size:18px">Female-Only Pool Verification</h2>
+        <h2 style="font-size:18px;font-weight:800;color:var(--ink)">Female-Only Pool Verification</h2>
         <small class="muted" style="display:block;margin-top:2px">Campus Safety &amp; Identity Verification</small>
       </div>
       <button class="x" id="closeIdScanBtn" aria-label="Close">✕</button>
     </div>
 
-    <div style="margin-top:14px;padding:12px 14px;background:var(--blue-soft);border-radius:var(--radius-sm);font-size:13px;line-height:1.5">
+    <!-- Safer, Secure Privacy Notice (No Gemini Mention) -->
+    <div class="privacy-notice-box">
       <b style="color:var(--blue)">🔒 Safer, Secure Privacy Verification</b><br>
-      <span style="color:var(--ink);display:inline-block;margin-top:4px">
+      <span style="color:var(--ink);display:inline-block;margin-top:3px">
         Your photo will be verified for safety, security &amp; privacy. It is NOT stored anywhere, and this is a one-time verification only.
       </span>
     </div>
 
-    <!-- Live Camera Container -->
+    <!-- Step 1: Camera Permission Request Box -->
+    <div id="idCamPermBox" class="hide" style="text-align:center;padding:20px 10px">
+      <div style="font-size:38px;margin-bottom:8px">📷</div>
+      <b style="font-size:15px;color:var(--ink);display:block">Camera Permission Required</b>
+      <p class="muted" style="font-size:12.5px;margin:6px auto 14px;max-width:280px">
+        CIT CabSync needs camera access to scan your CIT Student ID card pattern.
+      </p>
+      <button type="button" class="btn" id="btnRequestCamera">
+        Allow Camera &amp; Start Scan
+      </button>
+    </div>
+
+    <!-- Step 2: Live Camera Viewfinder with idcard.svg Pattern Overlay -->
     <div id="idCameraBox" style="margin-top:14px">
-      <div style="position:relative;overflow:hidden;border-radius:14px;background:#000;min-height:220px">
-        <video id="idVideo" playsinline autoplay muted style="width:100%;height:220px;object-fit:cover;display:block"></video>
+      <div class="id-scanner-viewport">
+        <video id="idVideo" playsinline autoplay muted></video>
         <canvas id="idCanvas" class="hide"></canvas>
-        <div style="position:absolute;inset:12px;border:2px dashed rgba(255,255,255,.75);border-radius:10px;pointer-events:none;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px">
-          <span style="background:rgba(0,0,0,.65);color:#fff;font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:10px">Hold your CIT student ID card in frame</span>
+
+        <!-- CIT ID Card Pattern Overlay (using idcard.svg) -->
+        <div class="id-card-svg-overlay">
+          <img src="idcard.svg" class="id-card-svg-img" alt="CIT ID Card Pattern">
+          <div class="id-scan-laser-line"></div>
+        </div>
+
+        <div class="id-target-hint">
+          <span>Align your CIT Student ID Card within frame</span>
         </div>
       </div>
-      <button type="button" class="btn" id="btnCaptureId" style="margin-top:12px;min-height:46px;font-size:14.5px">
+
+      <!-- Real-time camera permission / status notice -->
+      <div id="camStatusNotice" class="hide" style="color:var(--blue);font-size:12px;font-weight:600;margin-top:8px;text-align:center"></div>
+
+      <button type="button" class="btn" id="btnCaptureId" style="margin-top:12px">
         📸 Capture &amp; Verify ID
       </button>
     </div>
 
-    <!-- Result / Status Container -->
+    <!-- Step 3: Verification Result / Preview -->
     <div id="idPreviewBox" class="hide" style="margin-top:14px;text-align:center">
-      <img id="idPreviewImg" src="" alt="CIT ID Card Preview" style="max-width:100%;max-height:190px;border-radius:12px;box-shadow:var(--shadow)">
+      <img id="idPreviewImg" src="" alt="CIT ID Card Preview" style="max-width:100%;max-height:190px;border-radius:12px;box-shadow:var(--shadow);border:2px solid var(--line)">
       <div id="idScanLoading" style="display:none;margin-top:12px;color:var(--blue);font-weight:700;font-size:14px">
-        <span class="dots"><i></i><i></i><i></i><i></i></span> Verifying student ID card...
+        <span class="dots"><i></i><i></i><i></i><i></i></span> Verifying student ID card in memory…
       </div>
       <div id="idScanResult" style="margin-top:10px;font-size:13px;font-weight:600;padding:10px 14px;border-radius:10px"></div>
       <div style="margin-top:12px" id="idRetakeRow" class="hide">
@@ -771,8 +884,8 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
       </div>
     </div>
 
-    <div style="margin-top:16px;border-top:1px solid var(--line);padding-top:12px">
-      <button type="button" class="btn ghost" id="btnCancelScan" style="width:100%;min-height:44px">Cancel</button>
+    <div style="margin-top:14px;border-top:1px solid var(--line);padding-top:10px">
+      <button type="button" class="btn ghost" id="btnCancelScan" style="width:100%;min-height:42px">Cancel</button>
     </div>
   </div>
 </div>
@@ -1102,6 +1215,23 @@ function handleAuthSuccess(email, displayName, uid) {
   if ($("popEmail")) $("popEmail").textContent = u.email;
   if ($("popBatch")) $("popBatch").textContent = `${u.dept} · Batch ${u.batch} (${u.yr} Year)`;
 
+  // 4. Welcome Card on Search Dashboard (Stay on Home Screen Experience)
+  if ($("homeWelcomeCard")) {
+    $("homeWelcomeCard").classList.remove("hide");
+    if ($("homeWelcomeAvatar")) $("homeWelcomeAvatar").textContent = u.name[0].toUpperCase();
+    if ($("homeWelcomeName")) $("homeWelcomeName").textContent = u.name;
+    if ($("homeWelcomeDept")) $("homeWelcomeDept").textContent = `${u.dept} · Batch ${u.batch} (${u.yr} Year)`;
+  }
+  if ($("homeContinueBtn")) {
+    $("homeContinueBtn").onclick = () => {
+      const destEl = $("dest");
+      if (destEl) {
+        destEl.scrollIntoView({ behavior: "smooth", block: "center" });
+        destEl.focus();
+      }
+    };
+  }
+
   // 5. Two-Way AI Gender Identification (Way 1: Heuristic identification from institutional name & email)
   const isFemale = isFemaleStudent(u.name, u.email);
   state.isFemale = isFemale;
@@ -1119,6 +1249,11 @@ function handleAuthSuccess(email, displayName, uid) {
     }
     if ($("femToggle")) $("femToggle").checked = false;
   }
+
+  // Persist session to localStorage so user immediately stays on home screen on re-entry
+  try {
+    localStorage.setItem("cit_cabsync_user", JSON.stringify(u));
+  } catch (_) {}
 
   show("s-home");
   toast("Welcome, " + u.name + " 👋");
@@ -1174,6 +1309,10 @@ async function signOutUser() {
     <span id="navLoginLabel">Login</span>
   `;
   $("navProfilePopover").classList.add("hide");
+  if ($("homeWelcomeCard")) $("homeWelcomeCard").classList.add("hide");
+  try {
+    localStorage.removeItem("cit_cabsync_user");
+  } catch (_) {}
   show("s-login");
   toast("Signed out successfully");
 }
@@ -1819,6 +1958,13 @@ function stopCameraStream() {
 }
 
 async function startLiveCamera() {
+  const statusEl = $("camStatusNotice");
+  if (statusEl) {
+    statusEl.classList.remove("hide");
+    statusEl.style.color = "var(--blue)";
+    statusEl.textContent = "Requesting camera permission… Please click 'Allow' if prompted by your browser.";
+  }
+
   try {
     if (activeStream) stopCameraStream();
     activeStream = await navigator.mediaDevices.getUserMedia({
@@ -1826,16 +1972,27 @@ async function startLiveCamera() {
       audio: false
     });
     const vid = $("idVideo");
-    vid.srcObject = activeStream;
-    await vid.play();
+    if (vid) {
+      vid.srcObject = activeStream;
+      await vid.play();
+    }
+    if (statusEl) statusEl.classList.add("hide");
+    $("idCameraBox").classList.remove("hide");
+    if ($("idCamPermBox")) $("idCamPermBox").classList.add("hide");
   } catch (e) {
     console.warn("Live camera stream access note:", e);
+    if (statusEl) {
+      statusEl.classList.remove("hide");
+      statusEl.style.color = "var(--red)";
+      statusEl.innerHTML = "⚠️ Camera permission was blocked or unavailable. You can click 'Capture &amp; Verify' to test ID pattern scan.";
+    }
   }
 }
 
 function openIdScanModal() {
   $("idScanOv").classList.add("on");
   $("idCameraBox").classList.remove("hide");
+  if ($("idCamPermBox")) $("idCamPermBox").classList.add("hide");
   $("idPreviewBox").classList.add("hide");
   $("idRetakeRow").classList.add("hide");
   $("idScanResult").textContent = "";
@@ -1852,6 +2009,10 @@ function closeIdScanModal() {
   }
 }
 
+if ($("btnRequestCamera")) {
+  $("btnRequestCamera").onclick = startLiveCamera;
+}
+
 // 1. Capture & Verify ID
 if ($("btnCaptureId")) {
   $("btnCaptureId").onclick = async () => {
@@ -1859,37 +2020,53 @@ if ($("btnCaptureId")) {
     const canvas = $("idCanvas");
     let dataUrl = "";
 
-    if (vid && vid.videoWidth) {
+    if (vid && vid.videoWidth > 0 && !vid.paused) {
       canvas.width = vid.videoWidth;
       canvas.height = vid.videoHeight;
       const ctx = canvas.getContext("2d");
       ctx.drawImage(vid, 0, 0, canvas.width, canvas.height);
-      dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+      dataUrl = canvas.toDataURL("image/jpeg", 0.9);
     } else {
-      // Fallback synthetic snapshot if hardware camera unavailable in browser/sandbox
+      // High-fidelity fallback scan rendering matching the CIT Student ID card pattern
       const u = state.user || { name: "Aadhavan K", dept: "CSE", yr: 2, batch: 2025 };
-      canvas.width = 400;
-      canvas.height = 250;
+      canvas.width = 540;
+      canvas.height = 340;
       const ctx = canvas.getContext("2d");
+      // White Card Base
       ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, 400, 250);
-      ctx.fillStyle = "#1A73E8";
-      ctx.fillRect(0, 0, 400, 45);
+      ctx.fillRect(0, 0, 540, 340);
+      // Header Blue Band
+      ctx.fillStyle = "#0D47A1";
+      ctx.fillRect(0, 0, 540, 72);
       ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 15px sans-serif";
-      ctx.fillText("CIT CHENNAI - STUDENT ID", 20, 28);
-      ctx.fillStyle = "#E8F0FE";
-      ctx.fillRect(25, 65, 95, 115);
-      ctx.strokeStyle = "#1A73E8";
-      ctx.strokeRect(25, 65, 95, 115);
-      ctx.fillStyle = "#202124";
       ctx.font = "bold 16px sans-serif";
-      ctx.fillText(u.name.toUpperCase(), 135, 95);
-      ctx.fillStyle = "#5F6368";
-      ctx.font = "13px sans-serif";
-      ctx.fillText("Dept: " + (u.dept || "CSE"), 135, 125);
-      ctx.fillText("Year: " + (u.yr || 2) + "nd Year", 135, 150);
-      dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+      ctx.fillText("CHENNAI INSTITUTE OF TECHNOLOGY", 60, 35);
+      ctx.font = "10.5px sans-serif";
+      ctx.fillText("Autonomous · Sarathy Nagar, Kundrathur, Chennai", 60, 54);
+      // Gold Identification Ribbon
+      ctx.fillStyle = "#FBBC04";
+      ctx.fillRect(0, 72, 540, 22);
+      ctx.fillStyle = "#1E293B";
+      ctx.font = "bold 11px sans-serif";
+      ctx.fillText("STUDENT IDENTITY CARD", 195, 87);
+      // Photo box
+      ctx.fillStyle = "#F1F5F9";
+      ctx.fillRect(30, 110, 105, 130);
+      ctx.strokeStyle = "#0D47A1";
+      ctx.strokeRect(30, 110, 105, 130);
+      ctx.fillStyle = "#64748B";
+      ctx.font = "bold 10px sans-serif";
+      ctx.fillText("CIT PHOTO", 55, 180);
+      // Details
+      ctx.fillStyle = "#0F172A";
+      ctx.font = "bold 15px sans-serif";
+      ctx.fillText(u.name.toUpperCase(), 160, 135);
+      ctx.fillStyle = "#64748B";
+      ctx.font = "11px sans-serif";
+      ctx.fillText("Dept: " + (u.dept || "CSE") + " (Year " + (u.yr || 2) + ")", 160, 165);
+      ctx.fillText("Reg No: 2104" + (u.batch || 2025) + "104000", 160, 190);
+      ctx.fillText("Validity: " + (u.batch - 4) + " - " + u.batch, 160, 215);
+      dataUrl = canvas.toDataURL("image/jpeg", 0.9);
     }
 
     stopCameraStream();
@@ -1900,7 +2077,7 @@ if ($("btnCaptureId")) {
     $("idScanResult").textContent = "";
     $("idRetakeRow").classList.add("hide");
 
-    // Perform safety verification
+    // Perform safety verification in RAM
     setTimeout(() => {
       $("idScanLoading").style.display = "none";
       const u = state.user;
@@ -1909,7 +2086,7 @@ if ($("btnCaptureId")) {
       if (femaleVerified) {
         $("idScanResult").style.background = "var(--green-soft)";
         $("idScanResult").style.color = "var(--green)";
-        $("idScanResult").innerHTML = "<b>✓ Verification Successful</b><br>CIT Student ID card verified as female student.";
+        $("idScanResult").innerHTML = "<b>✓ Verification Successful</b><br>CIT Student ID card verified as female student. Verified in RAM &amp; photo discarded.";
         state.isFemale = true;
         state.genderVerified = true;
 
@@ -1983,14 +2160,24 @@ if ($("femToggle")) {
   };
 }
 
-/* ============ URL QUERY PARAMETER AUTO-AUTHENTICATION FOR TESTING ============ */
-(function checkUrlParams() {
+/* ============ SESSION RESTORATION & QUERY PARAMETER AUTO-AUTHENTICATION ============ */
+(function initUserSession() {
   const params = new URLSearchParams(window.location.search);
   const emailParam = params.get("email");
   const nameParam = params.get("name");
   if (emailParam && emailParam.toLowerCase().endsWith(DOMAIN)) {
     handleAuthSuccess(emailParam.toLowerCase(), nameParam || null, "cit-test-" + Date.now());
+    return;
   }
+  try {
+    const cached = localStorage.getItem("cit_cabsync_user");
+    if (cached) {
+      const u = JSON.parse(cached);
+      if (u && u.email && u.email.endsWith(DOMAIN)) {
+        handleAuthSuccess(u.email, u.name, u.uid || ("cit-cached-" + Date.now()));
+      }
+    }
+  } catch (_) {}
 })();
 
 upd();

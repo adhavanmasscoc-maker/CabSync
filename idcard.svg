@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 340" width="100%" height="100%">
+  <defs>
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0D47A1"/>
+      <stop offset="100%" stop-color="#1976D2"/>
+    </linearGradient>
+    <linearGradient id="cardBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F8FAFC"/>
+    </linearGradient>
+    <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Card Background -->
+  <rect x="10" y="10" width="520" height="320" rx="18" fill="url(#cardBg)" stroke="#CBD5E1" stroke-width="2" filter="url(#cardShadow)"/>
+
+  <!-- Top Institutional Header -->
+  <rect x="10" y="10" width="520" height="74" rx="18" fill="url(#headerGrad)"/>
+  <rect x="10" y="60" width="520" height="24" fill="url(#headerGrad)"/>
+
+  <!-- College Crest / Logo Lockup -->
+  <circle cx="50" cy="47" r="22" fill="#FFFFFF" opacity="0.95"/>
+  <path d="M50 32 L64 40 L64 54 L50 62 L36 54 L36 40 Z" fill="#0D47A1"/>
+  <circle cx="50" cy="47" r="7" fill="#FBBC04"/>
+
+  <!-- College Title -->
+  <text x="82" y="38" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="16" fill="#FFFFFF" letter-spacing="0.5">CHENNAI INSTITUTE OF TECHNOLOGY</text>
+  <text x="82" y="54" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="600" font-size="10.5" fill="#E2E8F0" letter-spacing="0.2">Autonomous · Affiliated to Anna University · Chennai - 600069</text>
+
+  <!-- Gold Identification Ribbon -->
+  <rect x="10" y="84" width="520" height="22" fill="#FBBC04"/>
+  <text x="270" y="99" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="11" fill="#1E293B" letter-spacing="1.5">STUDENT IDENTITY CARD</text>
+
+  <!-- Student Photo Frame -->
+  <rect x="34" y="122" width="110" height="135" rx="10" fill="#F1F5F9" stroke="#0D47A1" stroke-width="2.5" stroke-dasharray="4 2"/>
+  <rect x="36" y="124" width="106" height="131" rx="8" fill="#E2E8F0"/>
+  <!-- Silhouette icon -->
+  <circle cx="89" cy="168" r="24" fill="#94A3B8"/>
+  <path d="M57 236 C57 205 70 196 89 196 C108 196 121 205 121 236 Z" fill="#94A3B8"/>
+  <text x="89" y="248" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="9" font-weight="700" fill="#64748B">CIT PHOTO</text>
+
+  <!-- Student Details Grid -->
+  <g transform="translate(162, 126)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">
+    <!-- Student Name -->
+    <text x="0" y="16" font-size="15" font-weight="800" fill="#0F172A" letter-spacing="0.2">STUDENT NAME</text>
+    <line x1="0" y1="23" x2="330" y2="23" stroke="#E2E8F0" stroke-width="1.5"/>
+
+    <!-- Department -->
+    <text x="0" y="44" font-size="10" font-weight="700" fill="#64748B">DEPARTMENT</text>
+    <text x="0" y="60" font-size="12" font-weight="700" fill="#1E293B">B.E. COMPUTER SCIENCE &amp; ENGINEERING</text>
+
+    <!-- Reg No & Year -->
+    <text x="0" y="82" font-size="10" font-weight="700" fill="#64748B">REG NO / ROLL NO</text>
+    <text x="0" y="98" font-size="12" font-weight="700" fill="#1E293B">210421104000 (BATCH 2021-2025)</text>
+
+    <!-- Blood Group & Validity -->
+    <text x="0" y="120" font-size="10" font-weight="700" fill="#64748B">BLOOD GROUP</text>
+    <text x="0" y="134" font-size="11.5" font-weight="700" fill="#DC2626">O +VE</text>
+
+    <text x="140" y="120" font-size="10" font-weight="700" fill="#64748B">VALIDITY</text>
+    <text x="140" y="134" font-size="11.5" font-weight="700" fill="#1E293B">2021 - 2025</text>
+  </g>
+
+  <!-- Bottom Barcode & Signatures -->
+  <g transform="translate(34, 272)">
+    <!-- Barcode simulation -->
+    <rect x="0" y="0" width="3" height="34" fill="#1E293B"/>
+    <rect x="5" y="0" width="1.5" height="34" fill="#1E293B"/>
+    <rect x="9" y="0" width="4" height="34" fill="#1E293B"/>
+    <rect x="15" y="0" width="2" height="34" fill="#1E293B"/>
+    <rect x="20" y="0" width="5" height="34" fill="#1E293B"/>
+    <rect x="27" y="0" width="1.5" height="34" fill="#1E293B"/>
+    <rect x="31" y="0" width="3" height="34" fill="#1E293B"/>
+    <rect x="37" y="0" width="2" height="34" fill="#1E293B"/>
+    <rect x="42" y="0" width="4" height="34" fill="#1E293B"/>
+    <rect x="49" y="0" width="1.5" height="34" fill="#1E293B"/>
+    <rect x="53" y="0" width="3" height="34" fill="#1E293B"/>
+    <rect x="58" y="0" width="6" height="34" fill="#1E293B"/>
+    <rect x="67" y="0" width="2" height="34" fill="#1E293B"/>
+    <rect x="71" y="0" width="4" height="34" fill="#1E293B"/>
+    <rect x="78" y="0" width="1.5" height="34" fill="#1E293B"/>
+    <rect x="82" y="0" width="3" height="34" fill="#1E293B"/>
+    <rect x="88" y="0" width="5" height="34" fill="#1E293B"/>
+    <rect x="95" y="0" width="2" height="34" fill="#1E293B"/>
+    <rect x="100" y="0" width="4" height="34" fill="#1E293B"/>
+    <rect x="107" y="0" width="1.5" height="34" fill="#1E293B"/>
+    <rect x="111" y="0" width="3" height="34" fill="#1E293B"/>
+    <rect x="117" y="0" width="5" height="34" fill="#1E293B"/>
+    <rect x="125" y="0" width="2" height="34" fill="#1E293B"/>
+    <text x="63" y="46" text-anchor="middle" font-family="monospace" font-size="8.5" fill="#64748B">CIT*210421104000*STUDENT</text>
+  </g>
+
+  <!-- Principal Signature Line -->
+  <g transform="translate(390, 276)">
+    <path d="M10 18 Q25 4 45 16 T80 12 T110 16" fill="none" stroke="#0D47A1" stroke-width="1.8" stroke-linecap="round"/>
+    <line x1="0" y1="28" x2="120" y2="28" stroke="#94A3B8" stroke-width="1"/>
+    <text x="60" y="42" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="9" font-weight="700" fill="#64748B">PRINCIPAL / ISSUING AUTH</text>
+  </g>
+
+  <!-- Hologram Stamp -->
+  <circle cx="340" cy="275" r="16" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+  <circle cx="340" cy="275" r="12" fill="none" stroke="#38BDF8" stroke-width="1" stroke-dasharray="2 2"/>
+  <text x="340" y="278" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="7.5" font-weight="800" fill="#0284C7">CIT SECURE</text>
+
+  <!-- 4 Corner Target Brackets for Scanner Alignment HUD -->
+  <g stroke="#1A73E8" stroke-width="3.5" fill="none" stroke-linecap="round">
+    <path d="M 4 36 L 4 4 L 36 4"/>
+    <path d="M 536 36 L 536 4 L 504 4"/>
+    <path d="M 4 304 L 4 336 L 36 336"/>
+    <path d="M 536 304 L 536 336 L 504 336"/>
+  </g>
+</svg>
