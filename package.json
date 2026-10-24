@@ -1,19 +1,24 @@
 {
   "name": "cit-cabsync",
+  "private": true,
   "version": "1.0.0",
-  "description": "CIT CabSync — Privacy-first campus cab pooling for Chennai Institute of Technology students.",
-  "main": "index.html",
+  "type": "module",
   "scripts": {
-    "start": "npx serve .",
-    "deploy:firebase": "firebase deploy",
-    "deploy:vercel": "vercel --prod"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy:firebase": "npm run build && firebase deploy",
+    "deploy:hosting": "npm run build && firebase deploy --only hosting"
   },
-  "keywords": [
-    "cabsync",
-    "cit",
-    "firebase",
-    "material-design"
-  ],
-  "author": "CIT Chennai",
-  "license": "MIT"
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "firebase": "^10.12.2"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.3.4"
+  }
 }
