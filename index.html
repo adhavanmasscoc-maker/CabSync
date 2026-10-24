@@ -223,20 +223,47 @@ select:focus,input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,1
 @keyframes pop{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}
 .av{border-radius:50%;display:block}
 
-/* ============ TOAST ============ */
-.toast{position:fixed;top:20px;left:50%;transform:translate(-50%,-100px);background:var(--ink);color:var(--bg);
-  padding:12px 20px;border-radius:var(--radius);font-size:14px;font-weight:600;max-width:90%;
-  transition:transform .35s cubic-bezier(.4,0,.2,1);z-index:50;box-shadow:var(--shadow-lg)}
-.toast.show{transform:translate(-50%,0)}
+/* ============ TOAST (TOP FRONT LAYER, STRICTLY IN FRONT OF HEADER) ============ */
+.toast{
+  position:fixed;
+  top:calc(16px + env(safe-area-inset-top, 0px));
+  left:50%;
+  transform:translate(-50%, -120px);
+  background:var(--ink);
+  color:#ffffff;
+  padding:12px 22px;
+  border-radius:var(--radius-full);
+  font-size:13.5px;
+  font-weight:700;
+  max-width:min(90vw, 380px);
+  box-sizing:border-box;
+  text-align:center;
+  line-height:1.4;
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+  z-index:99999 !important; /* Top front layer - strictly above .app-header (z-index: 90) */
+  box-shadow:0 8px 30px rgba(0,0,0,.35), 0 2px 8px rgba(0,0,0,.2);
+  border:1.5px solid rgba(255,255,255,.2);
+  pointer-events:none;
+}
+.toast.show{
+  transform:translate(-50%, 0);
+}
 
-/* ============ PAY BAR (fixed bottom) ============ */
-.pay{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0));transform:translateX(-50%);
+/* ============ PAY BAR (fixed bottom, auto-dismiss after 5s) ============ */
+.pay{
+  position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0));
+  transform:translateX(-50%) translateY(120px);
   width:calc(100% - 32px);max-width:calc(var(--max-app) - 32px);
   background:var(--ink);color:var(--bg);border-radius:20px;padding:14px 18px;
-  display:none;align-items:center;gap:14px;box-shadow:0 8px 28px rgba(0,0,0,.25);text-align:left;z-index:10;
-  cursor:pointer;transition:transform var(--transition)}
-.pay.on{display:flex}
-.pay:hover{transform:translateX(-50%) translateY(-2px)}
+  display:flex;align-items:center;gap:14px;box-shadow:0 8px 28px rgba(0,0,0,.28);text-align:left;z-index:90;
+  cursor:pointer;transition:transform .4s cubic-bezier(.34,1.56,.64,1), opacity .3s ease;
+  opacity:0;pointer-events:none;
+}
+.pay.on{
+  transform:translateX(-50%) translateY(0);
+  opacity:1;pointer-events:auto;
+}
+.pay:hover{transform:translateX(-50%) translateY(-3px)}
 .pay:active{transform:translateX(-50%) scale(.98)}
 .pay .q{width:42px;height:42px;border-radius:var(--radius-sm);background:var(--green);
   display:grid;place-items:center;font-size:20px;flex:none}
@@ -1001,9 +1028,23 @@ function updateNavIndicator() {
 window.addEventListener("resize", updateNavIndicator);
 setTimeout(updateNavIndicator, 60);
 
+let payBarTimer = null;
 function show(id) {
   document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === id));
-  $("payBar").classList.toggle("on", id === "s-lobby");
+
+  // Offline Group Pay bar appears on lobby and auto-dismisses after 5s
+  const payBar = $("payBar");
+  if (payBar) {
+    clearTimeout(payBarTimer);
+    if (id === "s-lobby") {
+      payBar.classList.add("on");
+      payBarTimer = setTimeout(() => {
+        payBar.classList.remove("on");
+      }, 5000);
+    } else {
+      payBar.classList.remove("on");
+    }
+  }
 
   $("navLogin").classList.toggle("active", id === "s-login");
   $("navHome").classList.toggle("active", id === "s-home");
