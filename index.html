@@ -1413,19 +1413,6 @@ $("find").onclick = async () => {
   }
 };
 
-  clearTimeout(state.sim);
-  state.sim = setTimeout(() => {
-    if (!state.lobby) return;
-    try {
-      joinTransaction(state.lobby, { name: "Divya", dept: "ECE", yr: 2, pts: 1, isNew: true, votes: 0, hasMyVote: false });
-      render();
-      toast("Divya just joined the ride");
-    } catch (e) {
-      toast("A new rider couldn't join — cab is full");
-    }
-  }, 4500);
-};
-
 $("back").onclick = () => {
   if (unsubscribeRide) { unsubscribeRide(); unsubscribeRide = null; }
   if (unsubscribeChat) { unsubscribeChat(); unsubscribeChat = null; }
