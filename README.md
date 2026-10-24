@@ -21,27 +21,30 @@ CabSync solves this by pairing students traveling along identical routes at the 
 
 ---
 
-## Core Features & Fare Splitting
+## Core Features & Solutions
 
-### 1. Instant, Zero-Fee Fare Splitting
-* **Automated Fare Calculation:** The ride leader inputs the final meter or app fare (e.g. ₹600 for 4 students = ₹150/passenger).
-* **Direct UPI Deep Linking:** CabSync creates native `upi://pay` links and displays a pinned GPay/PhonePe QR code directly in the match lobby.
-* **Zero Intermediary Fees:** Money moves directly student-to-student via UPI without payment gateway cuts or transaction charges.
+### 1. Instant, Zero-Fee Fare Splitting & UPI Deep Links
+* **Automated Split Calculation:** The ride leader enters the final meter or app fare (e.g., ₹600 for 4 passengers = ₹150 each).
+* **Direct 1-Tap UPI Links:** Generates native `upi://pay` deep links and displays a pinned high-contrast GPay/PhonePe QR code directly in the lobby view.
+* **Zero Intermediary Fees:** Money moves directly peer-to-peer via UPI without payment gateway processing cuts or KYC compliance overhead.
 
-### 2. Institutional Authentication (`@citchennai.net`)
-* Access is strictly restricted to verified CIT student Google accounts.
-* Auto-extracts student name, department, and graduation year to build trustworthy lobby profiles without manual onboarding.
+### 2. Institutional Authentication & Profile Auto-Extraction
+* **Domain-Restricted Auth:** Exclusively restricted to `@citchennai.net` Google accounts; non-institutional emails are blocked at the authentication boundary.
+* **Smart Identity Parsing:** Automatically decomposes authenticated email strings upon login to populate passenger cards with Name, Department, and Batch Year (e.g., extracting "2025" to display 2nd-year status) with zero manual onboarding friction.
 
-### 3. Ephemeral Lobby & Private Coordination
-* Coordinate pickup spots and timing inside an isolated real-time lobby chat.
-* **Auto-Purge Lifecycle:** Chat history and lobby records are automatically wiped 1 hour after the scheduled departure. No phone numbers are ever stored or shared.
+### 3. Concurrency-Safe Luggage Knapsack Engine
+* **Physical Vehicle Capacity Limits:** Enforces strict integer point limits per vehicle class (Auto = 4 pts, Sedan = 7 pts, XL = 10 pts) accounting for backpacks (1 pt) and hard-shell trolleys (2 pts).
+* **Race-Condition Prevention:** All join requests execute inside atomic Firestore transactions. If concurrent users attempt to join and their combined luggage exceeds the vehicle limit, the transaction automatically aborts to prevent boot overflow.
 
-### 4. Smart Luggage Guard
-* Ensures passengers don't overwhelm vehicle boot space by accounting for backpacks versus large trolley bags during match creation.
+### 4. Ephemeral Female-Only Pool & Multi-Tier Verification
+* **In-Memory Optical Verification:** Female students snap a live camera photo of their physical CIT ID for text extraction via Google Cloud Vision API. The image is processed in RAM and discarded immediately without persisting to Cloud Storage.
+* **Automatic Name Matching:** Compares the extracted ID text against the authenticated Google account name.
+* **Community Fallback ("Pending State"):** Flagged or unclear scans generate a secure verification hash requiring authorized confirmation clicks from 3 already-verified female student UIDs.
 
-### 5. Verified Female-Only Pool
-* Optional preference toggle allowing female students to match exclusively with verified female peers.
-* Verified via fast, in-memory college ID card optical check with zero disk storage.
+### 5. Self-Destructing Lobby Chat & Group Moderation
+* **Private Route Coordination:** Real-time Firestore chat lets passengers coordinate pickup spots and departure times without ever exchanging phone numbers.
+* **Automated 1-Hour TTL Purge:** A background Cloud Function automatically deletes the chat collection exactly 1 hour after the scheduled departure time.
+* **Democratic "Vote Out" Moderation:** Ride documents maintain a vote-out array requiring majority approval (e.g., 2 votes in a 4-person pool) to remove a disruptive passenger. The voting mechanism automatically locks 45 minutes prior to departure to prevent stranded riders.
 
 ---
 
