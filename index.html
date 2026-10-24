@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
 <meta name="theme-color" content="#1A73E8">
 <meta name="description" content="CIT CabSync — Privacy-first campus cab pooling for Chennai Institute of Technology students.">
 <title>CIT CabSync</title>
@@ -10,8 +11,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* ============ TOKENS ============ */
-:root{
+/* ============ TOKENS (PERMANENT LIGHT GOOGLE THEME) ============ */
+:root,html,body{
+  color-scheme: light !important;
   --blue:#1A73E8;--red:#EA4335;--yellow:#FBBC04;--green:#34A853;
   --bg:#F8F9FA;--card:#fff;--ink:#202124;--muted:#5F6368;--line:#E3E8EF;
   --blue-soft:#E8F0FE;--green-soft:#E6F4EA;--red-soft:#FCE8E6;--yellow-soft:#FEF7E0;
@@ -21,11 +23,6 @@
   --font:'Figtree','Google Sans',system-ui,-apple-system,sans-serif;
   --max-app:460px;
   --transition:0.2s cubic-bezier(.4,0,.2,1);
-}
-@media(prefers-color-scheme:dark){
-  :root{--bg:#121417;--card:#1E2125;--ink:#E8EAED;--muted:#9AA0A6;--line:#32363B;
-  --blue-soft:#1C2B42;--green-soft:#1B2E22;--red-soft:#3A2220;--yellow-soft:#37301A;
-  --shadow:0 1px 3px rgba(0,0,0,.4);--shadow-lg:0 4px 16px rgba(0,0,0,.5)}
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{height:100%;scroll-behavior:smooth}
@@ -275,17 +272,11 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
 .top-nav-wrap{display:flex;justify-content:center;margin-bottom:18px}
 .top-nav{background:#EEF2F6;border-radius:var(--radius-full);padding:4px;
   display:inline-flex;gap:4px;box-shadow:inset 0 1px 2px rgba(0,0,0,.04)}
-@media(prefers-color-scheme:dark){
-  .top-nav{background:#262A30}
-}
 .nav-tab{border-radius:var(--radius-full);padding:7px 20px;font-size:14px;font-weight:600;
   color:var(--muted);transition:all var(--transition)}
 .nav-tab:hover{color:var(--ink)}
 .nav-tab.active{background:#fff;color:var(--blue);font-weight:700;
   box-shadow:0 1px 4px rgba(60,64,67,.18),0 1px 2px rgba(60,64,67,.1)}
-@media(prefers-color-scheme:dark){
-  .nav-tab.active{background:#1E2125;color:var(--blue)}
-}
 
 /* ============ 12-HOUR TIME PICKER (with AM / PM) ============ */
 .dt-container{display:flex;flex-direction:column;gap:10px}

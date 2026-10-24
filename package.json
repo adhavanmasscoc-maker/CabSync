@@ -1,0 +1,19 @@
+{
+  "name": "cit-cabsync",
+  "version": "1.0.0",
+  "description": "CIT CabSync — Privacy-first campus cab pooling for Chennai Institute of Technology students.",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "deploy:firebase": "firebase deploy",
+    "deploy:vercel": "vercel --prod"
+  },
+  "keywords": [
+    "cabsync",
+    "cit",
+    "firebase",
+    "material-design"
+  ],
+  "author": "CIT Chennai",
+  "license": "MIT"
+}
