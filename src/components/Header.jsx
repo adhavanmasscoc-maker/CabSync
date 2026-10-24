@@ -1,3 +1,4 @@
+// Developed by aknex
 import React, { useRef, useEffect, useState } from "react";
 
 export default function Header({ 

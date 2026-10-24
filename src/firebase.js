@@ -1,3 +1,4 @@
+// Developed by aknex
 import { initializeApp } from "firebase/app";
 import { 
   getAuth, 

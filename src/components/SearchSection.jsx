@@ -1,3 +1,4 @@
+// Developed by aknex
 import React from "react";
 
 export default function SearchSection({

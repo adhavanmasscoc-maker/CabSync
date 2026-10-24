@@ -1,3 +1,4 @@
+// Developed by aknex
 import React, { useRef, useState, useEffect } from "react";
 
 export default function CameraModal({ isOpen, onClose, onVerified }) {

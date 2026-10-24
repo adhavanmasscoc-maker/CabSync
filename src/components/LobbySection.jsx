@@ -1,3 +1,4 @@
+// Developed by aknex
 import React from "react";
 
 const COLORS = ["#1A73E8", "#EA4335", "#FBBC04", "#34A853"];
