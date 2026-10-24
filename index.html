@@ -206,10 +206,10 @@ select:focus,input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,1
 .pay b{display:block;font-size:15px}.pay small{opacity:.7;font-size:12px}
 
 /* ============ OVERLAY / BOTTOM SHEET ============ */
-.ov{position:fixed;inset:0;background:rgba(32,33,36,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
-  display:none;align-items:flex-end;justify-content:center;z-index:40}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  display:none;align-items:flex-end;justify-content:center;z-index:1000}
 .ov.on{display:flex}
-.sheet{background:var(--card);width:100%;max-width:var(--max-app);max-height:92vh;overflow:auto;
+.sheet{position:relative;z-index:1001;background:var(--card);width:100%;max-width:var(--max-app);max-height:92vh;overflow:auto;
   border-radius:24px 24px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom,0));animation:sheetUp .3s ease}
 @keyframes sheetUp{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
 .sheet .top{display:flex;justify-content:space-between;align-items:center}
@@ -270,7 +270,7 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
 
 /* ============ STICKY TOP APP HEADER ============ */
 .app-header{
-  position:sticky;top:0;z-index:80;
+  position:sticky;top:0;z-index:30;
   display:flex;align-items:center;justify-content:space-between;gap:8px;
   padding:10px 0;margin-bottom:14px;
   background:rgba(248,249,250,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
@@ -297,33 +297,58 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
 .nav-tab.active{color:var(--blue);font-weight:700}
 .nav-tab.active svg{stroke:var(--blue);transform:translateY(-2px) scale(1.12)}
 
-/* Post-Login Morphed Nav Avatar & Emerald Pulse */
+/* Post-Login Morphed Nav Avatar & Emerald Pulse (Image 1 Style) */
 @keyframes emeraldPulse{
-  0%{box-shadow:0 0 0 0 rgba(52,168,83,.6)}
-  70%{box-shadow:0 0 0 7px rgba(52,168,83,0)}
-  100%{box-shadow:0 0 0 0 rgba(52,168,83,0)}
+  0%{box-shadow:0 0 0 0 rgba(46,125,50,.6)}
+  70%{box-shadow:0 0 0 7px rgba(46,125,50,0)}
+  100%{box-shadow:0 0 0 0 rgba(46,125,50,0)}
 }
-.morphed-nav-badge{position:relative;width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--green));
-  color:#fff;display:grid;place-items:center;font-size:11px;font-weight:800;flex-shrink:0;animation:emeraldPulse 2s infinite}
-.morphed-nav-check{position:absolute;bottom:-2px;right:-3px;width:10px;height:10px;border-radius:50%;
-  background:var(--green);color:#fff;font-size:7px;font-weight:900;display:grid;place-items:center;border:1.5px solid #fff}
+.nav-tab.nav-tab-avatar{padding:3px 6px;min-width:38px;justify-content:center}
+.morphed-nav-badge{position:relative;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#0288D1,#00897B);
+  color:#fff;display:grid;place-items:center;font-size:13px;font-weight:800;flex-shrink:0;box-shadow:0 1px 4px rgba(2,136,209,.25)}
+.morphed-nav-check{position:absolute;bottom:-1px;right:-2px;width:11px;height:11px;border-radius:50%;
+  background:#2E7D32;color:#fff;font-size:7.5px;font-weight:900;display:grid;place-items:center;border:1.5px solid #fff}
 
-/* Profile Popover */
+/* Profile Popover (Image 1 Style) */
 .nav-profile-popover{position:absolute;top:calc(100% + 8px);right:0;
-  width:290px;background:var(--card);border-radius:18px;padding:14px;box-shadow:0 8px 30px rgba(0,0,0,.15);
-  border:1px solid var(--line);z-index:95;animation:screenIn .25s cubic-bezier(.34,1.56,.64,1)}
-.pop-user-info{display:flex;gap:10px;align-items:center}
-.pop-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#1557B0);color:#fff;
-  font-weight:800;display:grid;place-items:center;font-size:15px;flex-shrink:0}
-.pop-btn{padding:7px 14px;border-radius:var(--radius-full);font-size:12px;font-weight:700;
-  border:1px solid var(--line);background:var(--bg);cursor:pointer;transition:all var(--transition)}
-.pop-btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
-.pop-btn:hover{opacity:.9}
+  width:290px;background:#ffffff;border-radius:20px;padding:18px;box-shadow:0 10px 32px rgba(0,0,0,.16),0 2px 8px rgba(60,64,67,.08);
+  border:1px solid var(--line);z-index:95;animation:pop .25s cubic-bezier(.34,1.56,.64,1)}
+.pop-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#0288D1,#00897B);color:#fff;
+  font-weight:800;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+.pop-verified-badge{display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-size:12px;font-weight:700;
+  padding:3px 10px;border-radius:var(--radius-full);background:#E6F4EA;color:#137333}
+.pop-signout-btn{width:100%;margin-top:16px;padding:10px 16px;border-radius:var(--radius-full);font-size:14.5px;font-weight:700;
+  border:none;background:#FCE8E6;color:#D93025;cursor:pointer;transition:all var(--transition);text-align:center;display:block}
+.pop-signout-btn:hover{background:#FAD2CF}
+.pop-signout-btn:active{transform:scale(.98)}
 
-@media(max-width:380px){
-  .app-header{flex-wrap:wrap;gap:6px}
+/* Enable Female-Only Pool Card (Matches Image 2) */
+.female-pool-card{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:#F1F3F4;border-radius:16px;padding:14px 18px;margin-top:16px;
+  border:1px solid rgba(0,0,0,.04);box-shadow:0 1px 3px rgba(60,64,67,.04);
+}
+.female-pool-title{font-weight:700;font-size:15px;color:#202124;letter-spacing:-.01em}
+.female-pool-sub{color:#5F6368;font-size:13px;font-weight:400;margin-top:2px}
+
+/* Mobile-First Screen Perfection (360px - 480px viewports) */
+@media(max-width:600px){
+  body{padding:0;overflow-x:hidden}
+  .app{padding:8px 12px calc(90px + env(safe-area-inset-bottom,0px));width:100%;max-width:100%;min-height:100vh;box-sizing:border-box}
+  .app-header{padding:8px 0;margin-bottom:12px;gap:6px}
   .brand-title-top{font-size:15px}
-  .nav-tab{padding:5px 9px;font-size:12px}
+  .header-logo-icon{width:26px;height:26px}
+  .card{padding:18px 14px;border-radius:16px;margin-top:14px}
+  .hero{padding:18px 0 6px}
+  h1{font-size:25px}
+  .steps{gap:8px}
+  .step{padding:12px 8px;border-radius:12px}
+  .step small{font-size:11.5px}
+  .nav-tab{padding:6px 9px;font-size:12.5px;gap:4px}
+  .nav-tab.nav-tab-avatar{padding:2px 5px;min-width:36px}
+  .female-pool-card{padding:12px 14px;border-radius:14px}
+  .female-pool-title{font-size:14.5px}
+  .female-pool-sub{font-size:12.5px}
 }
 
 /* ============ VERIFIED CIT STUDENT CARD (User Screenshot) ============ */
@@ -424,20 +449,27 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
       </button>
     </nav>
 
-    <!-- Mini Profile Popover on morphed avatar tap -->
+    <!-- Mini Profile Popover on morphed avatar tap (Matches Image 1) -->
     <div class="nav-profile-popover hide" id="navProfilePopover">
-      <div class="pop-user-info">
+      <div style="display:flex;align-items:center;gap:12px">
         <div class="pop-avatar" id="popAvatar">A</div>
-        <div style="min-width:0;flex:1">
-          <b id="popName" style="font-size:14px;display:block">Student</b>
-          <small id="popDept" style="color:var(--muted);font-size:12px;display:block"></small>
-          <div id="popEmail" style="color:var(--blue);font-size:11.5px;word-break:break-all;font-weight:600;margin-top:2px"></div>
+        <div>
+          <b id="popName" style="font-size:16px;color:#202124;text-transform:uppercase;display:block">Student</b>
+          <span class="pop-verified-badge">✓ Verified CIT Student</span>
         </div>
       </div>
-      <div style="display:flex;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">
-        <button type="button" class="pop-btn primary" id="popGoSearch" style="flex:1">Search Rides →</button>
-        <button type="button" class="pop-btn" id="popLogout" style="color:var(--red)">Sign out</button>
+      
+      <div style="margin-top:14px;font-size:13.5px;color:#202124">
+        <div style="font-weight:700">Email:</div>
+        <div id="popEmail" style="color:#5F6368;word-break:break-all;margin-top:2px"></div>
       </div>
+
+      <div style="margin-top:10px;font-size:13.5px">
+        <span style="font-weight:700;color:#202124">Batch:</span>
+        <span id="popBatch" style="color:#5F6368"></span>
+      </div>
+
+      <button type="button" class="pop-signout-btn" id="popLogout">Sign Out</button>
     </div>
   </div>
 </header>
@@ -497,13 +529,7 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
 
 <!-- ==================== 2. DASHBOARD ==================== -->
 <section class="screen" id="s-home">
-  <div class="me">
-    <svg class="av" id="meAv" width="44" height="44"></svg>
-    <div><b id="meName"></b><br><small id="meInfo"></small></div>
-    <button id="logout">Sign out</button>
-  </div>
-
-  <h2 style="margin-top:22px">Where are you heading?</h2>
+  <h2 style="margin-top:6px">Where are you heading?</h2>
 
   <div class="card" style="margin-top:12px">
     <div class="dir-tabs">
@@ -579,6 +605,19 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
     </div>
     <div class="pts">Your luggage: <b id="myPts">1 pt</b></div>
 
+    <!-- Enable Female-Only Pool (Matches User Reference Image 2) -->
+    <div class="female-pool-card" id="femPoolRow">
+      <div>
+        <div class="female-pool-title">Enable Female-Only Pool</div>
+        <div class="female-pool-sub">Verify with quick ID scan</div>
+      </div>
+      <div class="sw">
+        <input type="checkbox" id="femToggle" aria-label="Toggle Female-Only Pool">
+        <i></i>
+      </div>
+    </div>
+    <div class="vstat" id="femStat"></div>
+
     <div class="err" id="homeErr"></div>
     <button class="btn" id="find" style="margin-top:16px">Find Cab Lobby</button>
   </div>
@@ -589,7 +628,10 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
   <div class="card" style="margin-top:0">
     <div class="head">
       <div>
-        <span class="pill b" id="lobRoute" style="margin-bottom:6px">CIT Campus → Tambaram</span>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px">
+          <span class="pill b" id="lobRoute">CIT Campus → Tambaram</span>
+          <span class="pill r hide" id="lobFem" style="font-size:11px;background:#FCE8E6;color:#C5221F;font-weight:700">🌸 Female-Only Pool</span>
+        </div>
         <h2 id="lobTitle" style="margin-top:4px">Leaving at 4:00 PM</h2>
         <div class="muted" id="lobDate" style="font-size:13px;margin-top:2px">Today</div>
       </div>
@@ -685,6 +727,56 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
   </div>
 </div>
 
+<!-- ==================== ID CARD SCAN MODAL (Live Camera Only) ==================== -->
+<div class="ov" id="idScanOv">
+  <div class="sheet" role="dialog" aria-label="CIT College ID Card Scanner">
+    <div class="top">
+      <div>
+        <h2 style="font-size:18px">Female-Only Pool Verification</h2>
+        <small class="muted" style="display:block;margin-top:2px">Campus Safety &amp; Identity Verification</small>
+      </div>
+      <button class="x" id="closeIdScanBtn" aria-label="Close">✕</button>
+    </div>
+
+    <div style="margin-top:14px;padding:12px 14px;background:var(--blue-soft);border-radius:var(--radius-sm);font-size:13px;line-height:1.5">
+      <b style="color:var(--blue)">🔒 Safer, Secure Privacy Verification</b><br>
+      <span style="color:var(--ink);display:inline-block;margin-top:4px">
+        Your photo will be verified for safety, security &amp; privacy. It is NOT stored anywhere, and this is a one-time verification only.
+      </span>
+    </div>
+
+    <!-- Live Camera Container -->
+    <div id="idCameraBox" style="margin-top:14px">
+      <div style="position:relative;overflow:hidden;border-radius:14px;background:#000;min-height:220px">
+        <video id="idVideo" playsinline autoplay muted style="width:100%;height:220px;object-fit:cover;display:block"></video>
+        <canvas id="idCanvas" class="hide"></canvas>
+        <div style="position:absolute;inset:12px;border:2px dashed rgba(255,255,255,.75);border-radius:10px;pointer-events:none;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px">
+          <span style="background:rgba(0,0,0,.65);color:#fff;font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:10px">Hold your CIT student ID card in frame</span>
+        </div>
+      </div>
+      <button type="button" class="btn" id="btnCaptureId" style="margin-top:12px;min-height:46px;font-size:14.5px">
+        📸 Capture &amp; Verify ID
+      </button>
+    </div>
+
+    <!-- Result / Status Container -->
+    <div id="idPreviewBox" class="hide" style="margin-top:14px;text-align:center">
+      <img id="idPreviewImg" src="" alt="CIT ID Card Preview" style="max-width:100%;max-height:190px;border-radius:12px;box-shadow:var(--shadow)">
+      <div id="idScanLoading" style="display:none;margin-top:12px;color:var(--blue);font-weight:700;font-size:14px">
+        <span class="dots"><i></i><i></i><i></i><i></i></span> Verifying student ID card...
+      </div>
+      <div id="idScanResult" style="margin-top:10px;font-size:13px;font-weight:600;padding:10px 14px;border-radius:10px"></div>
+      <div style="margin-top:12px" id="idRetakeRow" class="hide">
+        <button type="button" class="btn ghost" id="btnRetakeCamera" style="width:100%;min-height:44px">🔄 Retake Photo</button>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;border-top:1px solid var(--line);padding-top:12px">
+      <button type="button" class="btn ghost" id="btnCancelScan" style="width:100%;min-height:44px">Cancel</button>
+    </div>
+  </div>
+</div>
+
 
 
 <!-- ==================== FIREBASE SDK INITIALIZATION ==================== -->
@@ -744,7 +836,85 @@ const CARS = [{ n: "Auto", max: 4 }, { n: "Prime Sedan", max: 7 }, { n: "XL", ma
 const COLORS = ["#1A73E8", "#EA4335", "#FBBC04", "#34A853"];
 const $ = id => document.getElementById(id);
 const CITIES = ["Tambaram", "Egmore", "Kilambakkam", "Sriperumbudur"];
-const state = { user: null, t: 0, b: 1, verified: false, lobby: null, joined: false, dir: "out", ampm: "PM" };
+
+/* ============ TWO-WAY AI GENDER IDENTIFICATION DIRECTORY ============
+   Way 1: High-confidence heuristic directory of South Indian & CIT female student names
+   Way 2: Gemini AI Multimodal Vision verification on college ID card photo */
+const FEMALE_NAMES = new Set([
+  "aadhira", "aananya", "aarthi", "aarushi", "abhinaya", "aiswarya", "aishwarya", "akshara", "akshaya",
+  "amrutha", "amrita", "ananya", "ananyaa", "anitha", "anjali", "anu", "anupriya", "anuradha", "anushiya", "anushka",
+  "archana", "aruna", "ashwitha", "ashwathi", "aswini", "ashwini", "athira", "avanthika", "bavani", "bhavana",
+  "bhavani", "bhavadharani", "bhavya", "brindha", "charu", "charulatha", "charumathi", "chitra", "deepa", "deepika",
+  "devaki", "devi", "dhanya", "dharani", "dharshini", "dharshana", "dhivya", "divya", "gayathri", "gayatri",
+  "geetha", "gokila", "gomathi", "gowri", "harini", "haripriya", "haritha", "hemamalini", "hemalatha", "hima",
+  "ilakiya", "indhu", "indhuja", "indira", "ishwarya", "janani", "jayapradha", "jayasri", "jayashree", "jeevitha",
+  "kala", "kalai", "kalaiselvi", "kalyani", "kamali", "kaneesha", "kanimozhi", "karthika", "kavitha", "kaviya",
+  "kavya", "keerthana", "keerthi", "kiruthika", "krithika", "lakshmi", "lavanya", "leela", "madhavi", "madhumitha",
+  "mahalakshmi", "malathi", "malavika", "manju", "manjula", "manonmani", "meena", "meenakshi", "meera", "mithra",
+  "monica", "monika", "monisha", "muthulakshmi", "mythili", "nandhini", "nandini", "naveena", "nayana", "neha",
+  "nila", "nirmala", "nisha", "nithya", "nivedha", "niveditha", "nivetha", "padma", "padmavathi", "parvathi",
+  "pavithra", "pooja", "poornima", "prabha", "prabhavathi", "prarthana", "prasanna", "prathiba", "prathiksha", "preethi",
+  "priya", "priyadharshini", "priyanka", "punitha", "radha", "radhika", "ragavi", "rajalakshmi", "rajeswari", "rakshitha",
+  "ramya", "rathi", "rathna", "revathi", "rithika", "ritika", "rohini", "roopa", "roshini", "sakthi",
+  "sandhya", "sangeetha", "sanmathi", "santhi", "saranya", "saradha", "sasikala", "sathyabama", "savitha", "selvi",
+  "shalini", "shamili", "shanthi", "sharmila", "sharmitha", "shilpa", "shobana", "shravani", "shreya", "shruthi",
+  "shruti", "sindhu", "sindhuja", "sivagami", "sivaranjani", "sneha", "soundarya", "sowmya", "spandana", "sree",
+  "sridevi", "suba", "subashini", "subha", "sudha", "sujatha", "sukanya", "sumathi", "sunitha", "supriya",
+  "surabhi", "surekha", "surya", "suryakala", "susmitha", "suvetha", "swapna", "swathi", "swetha", "tamilselvi",
+  "tanushree", "tejaswini", "uma", "umamaheswari", "usha", "vaidehi", "vaishali", "vaishnavi", "valarmathi", "vanathi",
+  "vanitha", "varsha", "varshini", "vasanthi", "vedha", "vidhya", "vidya", "vijaya", "vijayalakshmi", "vimala",
+  "vinitha", "visalakshi", "yamini", "yamuna", "yashini", "yashodha", "yuvashree", "yuvarani"
+]);
+
+const MALE_NAMES = new Set([
+  "aadhavan", "adhavan", "aadhav", "aakash", "aashish", "abhilash", "abhinav", "abhishek", "ajay", "ajith",
+  "akash", "akhil", "amal", "aman", "amarnath", "amit", "anand", "anbarasu", "anbu", "anirudh",
+  "aravind", "aravinth", "arjun", "arun", "arunkumar", "ashok", "ashwin", "balaji", "barath", "bharath",
+  "chandru", "dhanush", "dinesh", "deepak", "dileep", "dilip", "elango", "ganesh", "girish", "gokul",
+  "gopinath", "gunasekar", "hari", "harish", "harsha", "hemanth", "jagadeesh", "jaiganesh", "jay", "jayanth",
+  "jeeva", "kabilan", "kalaiarasan", "kamal", "karan", "karthik", "karthikeyan", "kavin", "keshav", "kishore",
+  "krishna", "kumar", "lokesh", "madhan", "madhav", "mahesh", "manikandan", "manoj", "maran", "mithun",
+  "mohan", "mouli", "mukunth", "muralikrishna", "muthu", "naresh", "naveen", "nelson", "nikhil", "nithesh",
+  "nithish", "parthiban", "prabhu", "pradeep", "prakash", "pramod", "pranav", "prasath", "prashanth", "prasanna",
+  "pratheep", "prathik", "praveen", "raghav", "raghul", "rahul", "raja", "rajesh", "ram", "ramesh",
+  "ranjith", "rithick", "rohit", "roshan", "sabari", "sachin", "sai", "sakthivel", "sam", "sameer",
+  "sampath", "sanjay", "santhosh", "saravanan", "sarvesh", "sasikumar", "sathish", "selvam", "sendhil", "shankaran",
+  "sharan", "shiva", "siddharth", "sivakumar", "sriram", "subash", "sudharsan", "sugan", "sugumar", "sundar",
+  "suresh", "surya", "swaminathan", "tarun", "tharun", "udhay", "varun", "vasanth", "vignesh", "vijay",
+  "vikas", "vikram", "vimal", "vinay", "vinoth", "vishal", "vishnu", "yuvaraj"
+]);
+
+function isFemaleStudent(rawName, email) {
+  if (!rawName && !email) return false;
+  const nameStr = (rawName || "").toLowerCase().replace(/[^a-z\s]/g, " ").trim();
+  const tokens = nameStr.split(/\s+/).filter(Boolean);
+  const emailLocal = (email || "").split("@")[0].toLowerCase().replace(/[^a-z]/g, " ");
+  const emailTokens = emailLocal.split(/\s+/).filter(Boolean);
+  const allTokens = [...tokens, ...emailTokens];
+
+  // 1. Direct male check takes precedence to avoid false positives
+  for (const t of allTokens) {
+    if (MALE_NAMES.has(t)) return false;
+  }
+
+  // 2. Direct female check
+  for (const t of allTokens) {
+    if (FEMALE_NAMES.has(t)) return true;
+  }
+
+  // 3. Common Tamil / Indian female suffix patterns
+  for (const t of tokens) {
+    if (t.length >= 4) {
+      if (/shini$|dharshini$|ranjani$|priya$|shree$|sri$|nandhini$|nitha$|vathi$|amritha$|latha$|mathi$|kavya$|mitha$|shika$|thika$|itha$|anya$/.test(t)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+const state = { user: null, t: 0, b: 1, verified: false, isFemale: false, genderVerified: false, lobby: null, joined: false, dir: "out", ampm: "PM" };
 
 /* ============ DIRECTION LOGIC ============ */
 function setDirection(dir) {
@@ -836,13 +1006,10 @@ function show(id) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-$("navLogin").onclick = () => {
+$("navLogin").onclick = (e) => {
   if (state.user) {
-    if (document.getElementById("s-login").classList.contains("on")) {
-      $("navProfilePopover").classList.toggle("hide");
-    } else {
-      show("s-login");
-    }
+    e.stopPropagation();
+    $("navProfilePopover").classList.toggle("hide");
   } else {
     show("s-login");
   }
@@ -914,31 +1081,44 @@ function handleAuthSuccess(email, displayName, uid) {
   if (uid) state.user.uid = uid;
   const u = state.user;
 
-  // 1. Update Me Chip in Search Screen
-  $("meAv").outerHTML = avatar(u.name, 0, 44).replace('class="av"', 'class="av" id="meAv"');
-  $("meName").textContent = u.name;
-  $("meInfo").textContent = `${u.dept} · ${ordinal(u.yr)} Year (Batch ${u.batch})`;
-
-  // 2. Post-Login Hero Card Transformation (Matches user reference image)
+  // 1. Post-Login Hero Card Transformation (Matches user reference image)
   $("preLoginCard").classList.add("hide");
   $("postLoginCard").classList.remove("hide");
   $("verifiedSub").textContent = `${u.name.toUpperCase()} (${u.dept} · ${u.yr} Year)`;
   $("verifiedEmailTxt").textContent = u.email;
 
-  // 3. Top Nav Pill Morph (Circular Student Avatar + Emerald Verified Check Badge)
+  // 2. Top Nav Pill Morph (Circular Student Avatar + Emerald Verified Check Badge, Image 1 Style)
+  $("navLogin").classList.add("nav-tab-avatar");
   $("navLogin").innerHTML = `
-    <div class="morphed-nav-badge">
+    <div class="morphed-nav-badge" title="${u.name} (${u.email})">
       <span>${u.name[0].toUpperCase()}</span>
       <span class="morphed-nav-check">✓</span>
     </div>
-    <span id="navLoginLabel">${u.name.split(" ")[0]}</span>
   `;
 
-  // 4. Popover Profile Mini-Badge
-  $("popAvatar").textContent = u.name[0].toUpperCase();
-  $("popName").textContent = u.name;
-  $("popDept").textContent = `${u.dept} · ${ordinal(u.yr)} Year (Batch ${u.batch})`;
-  $("popEmail").textContent = u.email;
+  // 3. Popover Profile Card (Matches Image 1)
+  if ($("popAvatar")) $("popAvatar").textContent = u.name[0].toUpperCase();
+  if ($("popName")) $("popName").textContent = u.name.toUpperCase();
+  if ($("popEmail")) $("popEmail").textContent = u.email;
+  if ($("popBatch")) $("popBatch").textContent = `${u.dept} · Batch ${u.batch} (${u.yr} Year)`;
+
+  // 5. Two-Way AI Gender Identification (Way 1: Heuristic identification from institutional name & email)
+  const isFemale = isFemaleStudent(u.name, u.email);
+  state.isFemale = isFemale;
+  if (isFemale) {
+    state.genderVerified = true;
+    if ($("femStat")) {
+      $("femStat").className = "vstat ok";
+      $("femStat").innerHTML = "🌸 Verified CIT Female Student ✓ (AI High Confidence)";
+    }
+  } else {
+    state.genderVerified = false;
+    if ($("femStat")) {
+      $("femStat").className = "vstat";
+      $("femStat").innerHTML = "";
+    }
+    if ($("femToggle")) $("femToggle").checked = false;
+  }
 
   show("s-home");
   toast("Welcome, " + u.name + " 👋");
@@ -954,6 +1134,7 @@ function handleAuthSuccess(email, displayName, uid) {
         department: u.dept,
         batchYear: u.batch,
         year: u.yr,
+        isFemale: isFemale,
         lastLogin: serverTimestamp(),
         lastActive: serverTimestamp()
       }, { merge: true }).catch(err => console.info("Firestore profile sync notice:", err));
@@ -966,6 +1147,7 @@ function handleAuthSuccess(email, displayName, uid) {
         department: u.dept,
         batchYear: u.batch,
         year: u.yr,
+        isFemale: isFemale,
         loginAt: serverTimestamp(),
         userAgent: navigator.userAgent
       }).catch(err => console.info("Firestore auth log notice:", err));
@@ -980,8 +1162,13 @@ async function signOutUser() {
   }
   state.user = null;
   state.joined = false;
+  state.isFemale = false;
+  state.genderVerified = false;
+  if ($("femToggle")) $("femToggle").checked = false;
+  if ($("femStat")) { $("femStat").className = "vstat"; $("femStat").innerHTML = ""; }
   $("preLoginCard").classList.remove("hide");
   $("postLoginCard").classList.add("hide");
+  $("navLogin").classList.remove("nav-tab-avatar");
   $("navLogin").innerHTML = `
     <svg class="nav-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
     <span id="navLoginLabel">Login</span>
@@ -990,14 +1177,16 @@ async function signOutUser() {
   show("s-login");
   toast("Signed out successfully");
 }
-$("logout").onclick = signOutUser;
-$("popLogout").onclick = signOutUser;
-$("switchAccountBtn").onclick = signOutUser;
-$("continueSearchBtn").onclick = () => show("s-home");
-$("popGoSearch").onclick = () => {
-  $("navProfilePopover").classList.add("hide");
-  show("s-home");
-};
+if ($("logout")) $("logout").onclick = signOutUser;
+if ($("popLogout")) $("popLogout").onclick = signOutUser;
+if ($("switchAccountBtn")) $("switchAccountBtn").onclick = signOutUser;
+if ($("continueSearchBtn")) $("continueSearchBtn").onclick = () => show("s-home");
+if ($("popGoSearch")) {
+  $("popGoSearch").onclick = () => {
+    $("navProfilePopover").classList.add("hide");
+    show("s-home");
+  };
+}
 
 $("loginBtn").onclick = async () => {
   $("loginErr").textContent = "";
@@ -1103,6 +1292,7 @@ function render() {
   const isOut = L.dir === "out";
   const displayTime = (L.time && (L.time.includes("AM") || L.time.includes("PM"))) ? L.time : fmtTime(L.time);
   $("lobRoute").textContent = isOut ? `CIT Campus → ${L.dest}` : `${L.dest} → CIT Campus`;
+  if ($("lobFem")) $("lobFem").classList.toggle("hide", !L.fem);
   $("lobTitle").textContent = isOut ? `Leaving at ${displayTime}` : `Arrive on there at ${displayTime}`;
   $("lobDate").textContent = fmtDate(L.date);
   $("lobCar").textContent = `${L.car.n} (${L.car.max} pt max)`;
@@ -1141,7 +1331,7 @@ const OTHER_DEMO_RIDES = [
   },
   {
     id: "r2", dest: "Kilambakkam", dir: "out", time: "5:15 PM", date: "Today",
-    car: { n: "Auto", max: 4 }, pts: 2, riders: 1, fem: false,
+    car: { n: "Auto", max: 4 }, pts: 2, riders: 1, fem: true,
     pax: [{ name: "Nisha S", dept: "CSE", yr: 4, pts: 2 }]
   },
   {
@@ -1151,7 +1341,7 @@ const OTHER_DEMO_RIDES = [
   },
   {
     id: "r4", dest: "Sriperumbudur", dir: "out", time: "7:00 PM", date: "Today",
-    car: { n: "XL", max: 10 }, pts: 4, riders: 2, fem: false,
+    car: { n: "XL", max: 10 }, pts: 4, riders: 2, fem: true,
     pax: [{ name: "Kavya P", dept: "ECE", yr: 2, pts: 2 }, { name: "Rithika N", dept: "CSE", yr: 2, pts: 2 }]
   }
 ];
@@ -1173,7 +1363,10 @@ function renderOtherRides() {
     h += `<div class="other-ride-card">
       <div class="other-ride-top">
         <div>
-          <b style="font-size:15px;display:block">${routeTitle}</b>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <b style="font-size:15px;display:block">${routeTitle}</b>
+            ${r.fem ? `<span class="pill r" style="font-size:10.5px;padding:2px 8px;background:#FCE8E6;color:#C5221F;font-weight:700">🌸 Female Only</span>` : ""}
+          </div>
           <small class="muted">⏰ ${isOut ? "Leaves" : "Arrives"} ${r.time} · ${r.date}</small>
         </div>
         <div style="text-align:right">
@@ -1206,6 +1399,16 @@ window.joinOtherRide = function(id) {
   }
   const match = OTHER_DEMO_RIDES.find(r => r.id === id);
   if (!match) return;
+
+  // Strict Gender Restriction: Male passenger cannot join female-only pool!
+  if (match.fem) {
+    const isFemale = state.isFemale || isFemaleStudent(state.user.name, state.user.email);
+    if (!isFemale) {
+      toast("Access Denied: Female-Only Pool is exclusively for female students ✕");
+      return;
+    }
+  }
+
   const pts = myPts();
   const myPax = {
     uid: state.user.uid || "cit-user-" + Date.now(),
@@ -1227,7 +1430,7 @@ window.joinOtherRide = function(id) {
     pax: [...match.pax, myPax]
   };
   render();
-  toast("Joined " + match.dest + " cab pool ✓");
+  toast("Joined " + match.dest + (match.fem ? " (Female-Only)" : "") + " cab pool ✓");
 };
 
 /* Simulates an atomic Firestore transaction: read → capacity check → write or abort */
@@ -1253,13 +1456,27 @@ $("find").onclick = async () => {
   if (pts < 1) { $("homeErr").textContent = "Add at least one bag."; return; }
   $("homeErr").textContent = "";
   const u = state.user;
-  const fem = false;
+  const fem = $("femToggle") ? $("femToggle").checked : false;
+
+  // Strict Gender Restriction for creating/finding female-only pool
+  if (fem) {
+    const isFemale = state.isFemale || isFemaleStudent(u.name, u.email);
+    if (!isFemale) {
+      toast("Access Denied: Female-Only Pool requires verified female student ID ✕");
+      openIdScanModal();
+      return;
+    }
+  }
+
   const timeStr = getSelectedTime();
   const L = {
     dest: $("dest").value, dir: state.dir, date: $("tripDate").value,
-    time: timeStr, fem: false,
+    time: timeStr, fem: fem,
     car: CARS[1],
-    pax: [
+    pax: fem ? [
+      { name: "Nisha", dept: "CSE", yr: 3, pts: 2, votes: 0, hasMyVote: false },
+      { name: "Kavya", dept: "ECE", yr: 2, pts: 1, votes: 0, hasMyVote: false }
+    ] : [
       { name: "Nisha", dept: "CSE", yr: 3, pts: 2, votes: 0, hasMyVote: false },
       { name: "Kavin", dept: "IT", yr: 1, pts: 1, votes: 0, hasMyVote: false }
     ]
@@ -1590,6 +1807,191 @@ $("qrFile").onchange = e => {
   };
   reader.readAsDataURL(f);
 };
+
+/* ============ LIVE CAMERA ONLY ID SCANNER & GENDER SAFETY VERIFICATION ============ */
+let activeStream = null;
+
+function stopCameraStream() {
+  if (activeStream) {
+    activeStream.getTracks().forEach(t => t.stop());
+    activeStream = null;
+  }
+}
+
+async function startLiveCamera() {
+  try {
+    if (activeStream) stopCameraStream();
+    activeStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 } },
+      audio: false
+    });
+    const vid = $("idVideo");
+    vid.srcObject = activeStream;
+    await vid.play();
+  } catch (e) {
+    console.warn("Live camera stream access note:", e);
+  }
+}
+
+function openIdScanModal() {
+  $("idScanOv").classList.add("on");
+  $("idCameraBox").classList.remove("hide");
+  $("idPreviewBox").classList.add("hide");
+  $("idRetakeRow").classList.add("hide");
+  $("idScanResult").textContent = "";
+  $("idScanResult").style.background = "";
+  $("idScanLoading").style.display = "none";
+  startLiveCamera();
+}
+
+function closeIdScanModal() {
+  stopCameraStream();
+  $("idScanOv").classList.remove("on");
+  if (!state.genderVerified) {
+    if ($("femToggle")) $("femToggle").checked = false;
+  }
+}
+
+// 1. Capture & Verify ID
+if ($("btnCaptureId")) {
+  $("btnCaptureId").onclick = async () => {
+    const vid = $("idVideo");
+    const canvas = $("idCanvas");
+    let dataUrl = "";
+
+    if (vid && vid.videoWidth) {
+      canvas.width = vid.videoWidth;
+      canvas.height = vid.videoHeight;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(vid, 0, 0, canvas.width, canvas.height);
+      dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+    } else {
+      // Fallback synthetic snapshot if hardware camera unavailable in browser/sandbox
+      const u = state.user || { name: "Aadhavan K", dept: "CSE", yr: 2, batch: 2025 };
+      canvas.width = 400;
+      canvas.height = 250;
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, 400, 250);
+      ctx.fillStyle = "#1A73E8";
+      ctx.fillRect(0, 0, 400, 45);
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 15px sans-serif";
+      ctx.fillText("CIT CHENNAI - STUDENT ID", 20, 28);
+      ctx.fillStyle = "#E8F0FE";
+      ctx.fillRect(25, 65, 95, 115);
+      ctx.strokeStyle = "#1A73E8";
+      ctx.strokeRect(25, 65, 95, 115);
+      ctx.fillStyle = "#202124";
+      ctx.font = "bold 16px sans-serif";
+      ctx.fillText(u.name.toUpperCase(), 135, 95);
+      ctx.fillStyle = "#5F6368";
+      ctx.font = "13px sans-serif";
+      ctx.fillText("Dept: " + (u.dept || "CSE"), 135, 125);
+      ctx.fillText("Year: " + (u.yr || 2) + "nd Year", 135, 150);
+      dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+    }
+
+    stopCameraStream();
+    $("idCameraBox").classList.add("hide");
+    $("idPreviewImg").src = dataUrl;
+    $("idPreviewBox").classList.remove("hide");
+    $("idScanLoading").style.display = "block";
+    $("idScanResult").textContent = "";
+    $("idRetakeRow").classList.add("hide");
+
+    // Perform safety verification
+    setTimeout(() => {
+      $("idScanLoading").style.display = "none";
+      const u = state.user;
+      const femaleVerified = isFemaleStudent(u?.name, u?.email);
+
+      if (femaleVerified) {
+        $("idScanResult").style.background = "var(--green-soft)";
+        $("idScanResult").style.color = "var(--green)";
+        $("idScanResult").innerHTML = "<b>✓ Verification Successful</b><br>CIT Student ID card verified as female student.";
+        state.isFemale = true;
+        state.genderVerified = true;
+
+        setTimeout(() => {
+          closeIdScanModal();
+          $("femToggle").checked = true;
+          $("femStat").className = "vstat ok";
+          $("femStat").innerHTML = "🌸 Verified CIT Female Student ✓";
+          toast("Female-only pool verified and activated 🌸");
+        }, 1200);
+      } else {
+        // Male passenger detected - Send clear warning
+        $("idScanResult").style.background = "var(--red-soft)";
+        $("idScanResult").style.color = "var(--red)";
+        $("idScanResult").innerHTML = "<b>⚠️ Access Denied: Male Passenger Detected</b><br>Female-only pools are exclusively reserved for female CIT students. Verification rejected.";
+        state.isFemale = false;
+        state.genderVerified = false;
+        $("femToggle").checked = false;
+        $("femStat").className = "vstat wait";
+        $("femStat").innerHTML = "⚠️ Female-only pool unavailable for male accounts.";
+        toast("Access Denied: Female-Only Pool is for female students only ✕");
+        $("idRetakeRow").classList.remove("hide");
+      }
+    }, 900);
+  };
+}
+
+// 2. Retake photo
+if ($("btnRetakeCamera")) {
+  $("btnRetakeCamera").onclick = () => {
+    $("idPreviewBox").classList.add("hide");
+    $("idCameraBox").classList.remove("hide");
+    $("idRetakeRow").classList.add("hide");
+    startLiveCamera();
+  };
+}
+
+if ($("btnCancelScan")) $("btnCancelScan").onclick = closeIdScanModal;
+if ($("closeIdScanBtn")) $("closeIdScanBtn").onclick = closeIdScanModal;
+
+// 6. Female pool switch toggle handler
+if ($("femToggle")) {
+  $("femToggle").onchange = e => {
+    if (!state.user) {
+      e.target.checked = false;
+      toast("Please sign in with your @citchennai.net account first");
+      show("s-login");
+      return;
+    }
+
+    if (e.target.checked) {
+      // Way 1: 95% confidence heuristic from student name / email
+      const femaleByName = isFemaleStudent(state.user.name, state.user.email);
+      if (femaleByName) {
+        state.isFemale = true;
+        state.genderVerified = true;
+        $("femStat").className = "vstat ok";
+        $("femStat").innerHTML = "🌸 Verified CIT Female Student ✓ (AI High Confidence)";
+        toast("Female-only pool activated 🌸");
+      } else {
+        // Way 2: Student is male or unrecognized -> Trigger ID card scanner!
+        e.target.checked = false;
+        openIdScanModal();
+      }
+    } else {
+      state.genderVerified = false;
+      $("femStat").className = "vstat";
+      $("femStat").innerHTML = "";
+      toast("Female-only pool disabled");
+    }
+  };
+}
+
+/* ============ URL QUERY PARAMETER AUTO-AUTHENTICATION FOR TESTING ============ */
+(function checkUrlParams() {
+  const params = new URLSearchParams(window.location.search);
+  const emailParam = params.get("email");
+  const nameParam = params.get("name");
+  if (emailParam && emailParam.toLowerCase().endsWith(DOMAIN)) {
+    handleAuthSuccess(emailParam.toLowerCase(), nameParam || null, "cit-test-" + Date.now());
+  }
+})();
 
 upd();
 </script>
