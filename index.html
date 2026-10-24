@@ -277,8 +277,8 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
   border-bottom:1px solid rgba(227,232,239,.6);
 }
 .brand-lockup-top{display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none;flex-shrink:0}
-.gdg-bracket-icon{display:flex;align-items:center;justify-content:center;transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
-.brand-lockup-top:hover .gdg-bracket-icon,.brand-lockup-top:active .gdg-bracket-icon{transform:rotate(12deg) scale(1.15)}
+.header-logo-icon{width:28px;height:28px;border-radius:8px;box-shadow:0 1px 4px rgba(66,133,244,.2);display:block;transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+.brand-lockup-top:hover .header-logo-icon,.brand-lockup-top:active .header-logo-icon{transform:rotate(10deg) scale(1.12)}
 .brand-title-top{font-weight:700;color:#202124;font-size:16px;letter-spacing:-.01em;white-space:nowrap}
 
 /* Segmented Navigation (Animated Sliding Pill Track) */
@@ -403,18 +403,7 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
 <!-- ==================== STICKY TOP APP HEADER ==================== -->
 <header class="app-header" id="appHeader">
   <div class="brand-lockup-top" id="brandLockupTop" role="button" tabindex="0" title="Back to top">
-    <div class="gdg-bracket-icon" aria-hidden="true">
-      <svg width="22" height="22" viewBox="0 0 28 28" fill="none">
-        <!-- Red < bracket -->
-        <path d="M8 8L3 14L8 20" stroke="#EA4335" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-        <!-- Blue / slash -->
-        <line x1="11.5" y1="21" x2="16.5" y2="7" stroke="#4285F4" stroke-width="2.6" stroke-linecap="round"/>
-        <!-- Green > bracket -->
-        <path d="M20 8L25 14L20 20" stroke="#34A853" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-        <!-- Yellow dot -->
-        <circle cx="14" cy="14" r="1.5" fill="#FBBC04"/>
-      </svg>
-    </div>
+    <img src="cabsync.svg" class="header-logo-icon" alt="CIT CabSync Logo" width="28" height="28">
     <span class="brand-title-top">CIT CabSync</span>
   </div>
 

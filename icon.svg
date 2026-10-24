@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%" fill="none">
+  <defs>
+    <!-- Google Material Design 3 Soft Elevation Shadows -->
+    <filter id="m3CardShadow" x="-12%" y="-10%" width="124%" height="126%">
+      <feDropShadow dx="0" dy="12" stdDeviation="20" flood-color="#1A73E8" flood-opacity="0.10" />
+      <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#202124" flood-opacity="0.07" />
+    </filter>
+
+    <filter id="ribbonShadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#202124" flood-opacity="0.12" />
+    </filter>
+  </defs>
+
+  <!-- =========================================================
+       1. GOOGLE MATERIAL DESIGN 3 WHITE SQUIRCLE CANVAS
+       ========================================================= -->
+  <rect x="24" y="24" width="464" height="464" rx="112" fill="#FFFFFF" filter="url(#m3CardShadow)" />
+  <rect x="25" y="25" width="462" height="462" rx="111" stroke="#E8EAED" stroke-width="2" />
+
+  <!-- Subtle Material Surface Inner Circle -->
+  <circle cx="256" cy="216" r="144" fill="#F8F9FA" stroke="#F1F3F4" stroke-width="2" />
+
+  <!-- =========================================================
+       2. ABSTRACT GOOGLE-THEMED 4-COLOR SYNC & ROUTE HUB MARK
+          (Zero Vehicles • Zero GDG Brackets • Pure Geometric Mark)
+       ========================================================= -->
+  <g filter="url(#ribbonShadow)">
+    <!-- Quadrant 1 (Top-Left to Top): Google Blue (#4285F4) Sync Arc + Rider Node -->
+    <path d="M148 216 A108 108 0 0 1 256 108" stroke="#4285F4" stroke-width="26" stroke-linecap="round" />
+    <circle cx="148" cy="216" r="19" fill="#1A73E8" stroke="#FFFFFF" stroke-width="5" />
+
+    <!-- Quadrant 2 (Top to Right): Google Red (#EA4335) Sync Arc + Rider Node -->
+    <path d="M256 108 A108 108 0 0 1 364 216" stroke="#EA4335" stroke-width="26" stroke-linecap="round" />
+    <circle cx="256" cy="108" r="19" fill="#EA4335" stroke="#FFFFFF" stroke-width="5" />
+
+    <!-- Quadrant 3 (Right to Bottom): Google Yellow (#FBBC04) Sync Arc + Rider Node -->
+    <path d="M364 216 A108 108 0 0 1 256 324" stroke="#FBBC04" stroke-width="26" stroke-linecap="round" />
+    <circle cx="364" cy="216" r="19" fill="#FBBC04" stroke="#FFFFFF" stroke-width="5" />
+
+    <!-- Quadrant 4 (Bottom to Left): Google Green (#34A853) Sync Arc + Rider Node -->
+    <path d="M256 324 A108 108 0 0 1 148 216" stroke="#34A853" stroke-width="26" stroke-linecap="round" />
+    <circle cx="256" cy="324" r="19" fill="#34A853" stroke="#FFFFFF" stroke-width="5" />
+  </g>
+
+  <!-- =========================================================
+       3. CENTER GEOMETRIC LOCATION & SYNC COMPASS CORE
+       ========================================================= -->
+  <g filter="url(#ribbonShadow)">
+    <!-- Central White Material Elevation Disc -->
+    <circle cx="256" cy="216" r="64" fill="#FFFFFF" stroke="#E8EAED" stroke-width="2" />
+
+    <!-- Abstract Geometric Location Pin / Route Convergence (4-Color Petals) -->
+    <!-- Top-Left Petal (Blue) -->
+    <path d="M256 168 C236 168 220 184 220 204 C220 216 234 232 256 254 V168 Z" fill="#4285F4" />
+    <!-- Top-Right Petal (Red) -->
+    <path d="M256 168 C276 168 292 184 292 204 C292 216 278 232 256 254 V168 Z" fill="#EA4335" />
+    <!-- Bottom-Right Sync Wave (Yellow) -->
+    <path d="M256 220 L285 204 C282 226 270 242 256 256 V220 Z" fill="#FBBC04" />
+    <!-- Bottom-Left Sync Wave (Green) -->
+    <path d="M256 220 L227 204 C230 226 242 242 256 256 V220 Z" fill="#34A853" />
+
+    <!-- Crisp Inner Pin Bullseye -->
+    <circle cx="256" cy="202" r="15" fill="#FFFFFF" />
+    <circle cx="256" cy="202" r="7" fill="#1A73E8" />
+  </g>
+
+  <!-- =========================================================
+       4. PURE VECTOR WORDMARK: "CABSYNC" (Google Material Style)
+       ========================================================= -->
+  <!-- Light Material Pill Container -->
+  <rect x="102" y="390" width="308" height="56" rx="28" fill="#F8F9FA" stroke="#DADCE0" stroke-width="1.5" />
+
+  <!-- Geometric Vector Paths for "CAB" (#202124) + "SYNC" (#1A73E8) + 4-Color Dots -->
+  <g transform="translate(128, 406)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- C -->
+    <path d="M22 4 H10 A6 6 0 0 0 4 10 V14 A6 6 0 0 0 10 20 H22" stroke="#202124" stroke-width="4.5" />
+    <!-- A -->
+    <path d="M34 20 L43 4 L52 20 M37 15 H49" stroke="#202124" stroke-width="4.5" />
+    <!-- B -->
+    <path d="M64 4 V20 M64 4 H75 A4 4 0 0 1 79 8 A4 4 0 0 1 75 12 H64 M64 12 H76 A4 4 0 0 1 80 16 A4 4 0 0 1 76 20 H64" stroke="#202124" stroke-width="4.5" />
+
+    <!-- S -->
+    <path d="M114 4 H102 A4 4 0 0 0 98 8 C98 12 114 12 114 16 A4 4 0 0 1 110 20 H98" stroke="#1A73E8" stroke-width="4.5" />
+    <!-- Y -->
+    <path d="M126 4 L135 12 L144 4 M135 12 V20" stroke="#1A73E8" stroke-width="4.5" />
+    <!-- N -->
+    <path d="M156 20 V4 L172 20 V4" stroke="#1A73E8" stroke-width="4.5" />
+    <!-- C -->
+    <path d="M202 4 H190 A6 6 0 0 0 184 10 V14 A6 6 0 0 0 190 20 H202" stroke="#1A73E8" stroke-width="4.5" />
+
+    <!-- Signature 4-Color Google Cluster Dots on Right -->
+    <circle cx="222" cy="8" r="3.5" fill="#4285F4" />
+    <circle cx="232" cy="8" r="3.5" fill="#EA4335" />
+    <circle cx="222" cy="17" r="3.5" fill="#FBBC04" />
+    <circle cx="232" cy="17" r="3.5" fill="#34A853" />
+  </g>
+</svg>
