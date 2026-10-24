@@ -368,28 +368,35 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
   .female-pool-card{padding:12px 12px;border-radius:12px}
 }
 
-/* ============ HOME WELCOME CARD (STAY ON HOME SCREEN EXPERIENCE) ============ */
-.home-welcome-card{
-  background:linear-gradient(135deg,#E8F0FE,#F8F9FA);border:1.5px solid #D2E3FC;
-  border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:var(--shadow);
+/* ============ VERIFIED CIT STUDENT CARD (MATCHES USER REFERENCE SCREENSHOT ON LOGIN PAGE) ============ */
+.verified-card{
+  background:linear-gradient(135deg,#EFF6FF,#F8FAFC);border:1.5px solid #BFDBFE;
+  border-radius:18px;padding:16px;margin-top:14px;box-shadow:var(--shadow);
   display:flex;flex-direction:column;gap:10px;animation:screenIn .3s ease;
 }
-.welcome-top-row{display:flex;align-items:center;gap:12px}
-.welcome-avatar-circle{
-  width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#0288D1,#00897B);
-  color:#fff;font-weight:800;font-size:16px;display:grid;place-items:center;flex-shrink:0;box-shadow:0 2px 6px rgba(2,136,209,.25);
+.verified-top-row{display:flex;align-items:center;gap:12px}
+.verified-avatar-circle{
+  width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#0288D1,#00897B);
+  color:#fff;font-weight:800;font-size:18px;display:grid;place-items:center;flex-shrink:0;box-shadow:0 2px 6px rgba(2,136,209,.25);
 }
-.welcome-badge-pill{
-  display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;
-  padding:2px 8px;border-radius:9999px;background:#E6F4EA;color:#137333;margin-top:2px;
+.verified-welcome-title{
+  font-size:16px;color:var(--ink);font-weight:800;letter-spacing:-.2px;
 }
-.welcome-continue-btn{
-  width:100%;min-height:42px;border-radius:9999px;background:var(--blue);color:#fff;
-  font-weight:700;font-size:13.5px;border:none;cursor:pointer;display:flex;align-items:center;
-  justify-content:center;gap:6px;box-shadow:0 2px 6px rgba(26,115,232,.3);transition:all .2s ease;
+.verified-badge-pill{
+  display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;
+  padding:3px 9px;border-radius:9999px;background:#E6F4EA;color:#137333;margin-top:4px;
 }
-.welcome-continue-btn:hover{background:#1765c9}
-.welcome-continue-btn:active{transform:scale(.98)}
+.verified-continue-btn{
+  width:100%;min-height:44px;border-radius:9999px;background:var(--blue);color:#fff;
+  font-weight:700;font-size:14px;border:none;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;gap:6px;box-shadow:0 3px 8px rgba(26,115,232,.35);transition:all .2s ease;
+  margin-top:6px;
+}
+.verified-continue-btn:hover{background:#1765c9;transform:translateY(-1px)}
+.verified-continue-btn:active{transform:scale(.98)}
+.verified-switch-btn{
+  font-size:12.5px;color:var(--blue);cursor:pointer;text-decoration:underline;background:none;border:none;font-weight:600;display:inline-block;
+}
 
 /* ============ ID SCANNER VIEWPORT WITH idcard.svg HUD PATTERN ============ */
 .id-scanner-viewport{
@@ -544,6 +551,7 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
         <span id="popBatch" style="color:#5F6368"></span>
       </div>
 
+      <button type="button" class="btn" id="popGoSearch" style="margin-top:14px;width:100%;min-height:40px;border-radius:9999px;font-size:13px;font-weight:700">Continue Ride Search →</button>
       <button type="button" class="pop-signout-btn" id="popLogout">Sign Out</button>
     </div>
   </div>
@@ -579,45 +587,27 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
     <p class="note">Restricted to CIT institutional accounts only.<br>Non-college emails will be blocked.</p>
   </div>
 
-  <!-- Verified CIT Student Card (Matches User Reference Image) -->
+  <!-- Verified CIT Student Card on Login Screen (Matches User Reference Screenshot) -->
   <div class="verified-card hide" id="postLoginCard">
-    <div class="verified-header">
-      <div class="verified-badge-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-      </div>
-      <div>
-        <b style="font-size:16px;color:var(--ink);display:block">Verified CIT Student</b>
-        <div class="verified-sub" id="verifiedSub" style="font-size:13.5px;color:var(--muted);font-weight:600;margin-top:2px"></div>
+    <div class="verified-top-row">
+      <div class="verified-avatar-circle" id="verifiedAvatar">A</div>
+      <div style="flex:1;min-width:0">
+        <div class="verified-welcome-title">Welcome back, <span id="verifiedNameTxt">Student</span>! 👋</div>
+        <div class="verified-badge-pill">✓ Verified CIT Student · <span id="verifiedSub">CSE · Batch 2025 (2 Year)</span></div>
       </div>
     </div>
-    <p class="verified-email" style="margin-top:14px;font-size:13px;color:var(--muted)">Signed in as <b id="verifiedEmailTxt" style="color:var(--ink)"></b></p>
-    <button type="button" class="btn" id="continueSearchBtn" style="margin-top:16px">
-      Continue to Ride Search →
+    <div style="font-size:12px;color:var(--muted);margin-top:2px">Signed in as <b id="verifiedEmailTxt" style="color:var(--ink)"></b></div>
+    <button type="button" class="verified-continue-btn" id="continueSearchBtn">
+      Continue Ride Search →
     </button>
-    <div style="text-align:center;margin-top:12px">
-      <button type="button" id="switchAccountBtn" style="font-size:13px;color:var(--muted);cursor:pointer;text-decoration:underline;background:none;border:none">Switch Account / Sign Out</button>
+    <div style="text-align:center;margin-top:6px">
+      <button type="button" class="verified-switch-btn" id="switchAccountBtn">Switch Account / Sign Out</button>
     </div>
   </div>
 </section>
 
 <!-- ==================== 2. DASHBOARD ==================== -->
 <section class="screen" id="s-home">
-  <!-- Welcome Banner for Verified Students (Stay on Home Screen) -->
-  <div class="home-welcome-card hide" id="homeWelcomeCard">
-    <div class="welcome-top-row">
-      <div class="welcome-avatar-circle" id="homeWelcomeAvatar">A</div>
-      <div style="flex:1">
-        <div style="font-size:15px;color:var(--ink);font-weight:700">Welcome back, <span id="homeWelcomeName">Student</span>! 👋</div>
-        <div class="welcome-badge-pill">✓ Verified CIT Student · <span id="homeWelcomeDept">CSE 2nd Year</span></div>
-      </div>
-    </div>
-    <button type="button" class="welcome-continue-btn" id="homeContinueBtn">
-      Continue Ride Search →
-    </button>
-  </div>
-
   <h2 style="margin-top:6px">Where are you heading?</h2>
 
   <div class="card" style="margin-top:12px">
@@ -1188,17 +1178,19 @@ function parseEmail(email) {
   return { name: rawName, dept, batch, yr: Math.min(4, Math.max(1, NOW_YEAR - batch + 1)), email };
 }
 
-function handleAuthSuccess(email, displayName, uid) {
+function handleAuthSuccess(email, displayName, uid, autoGoHome = false) {
   state.user = parseEmail(email);
   if (displayName) state.user.name = displayName;
   if (uid) state.user.uid = uid;
   const u = state.user;
 
-  // 1. Post-Login Hero Card Transformation (Matches user reference image)
+  // 1. Post-Login Hero Card on Login Screen (Matches user reference screenshot)
   $("preLoginCard").classList.add("hide");
   $("postLoginCard").classList.remove("hide");
-  $("verifiedSub").textContent = `${u.name.toUpperCase()} (${u.dept} · ${u.yr} Year)`;
-  $("verifiedEmailTxt").textContent = u.email;
+  if ($("verifiedAvatar")) $("verifiedAvatar").textContent = u.name[0].toUpperCase();
+  if ($("verifiedNameTxt")) $("verifiedNameTxt").textContent = u.name;
+  if ($("verifiedSub")) $("verifiedSub").textContent = `${u.dept} · Batch ${u.batch} (${u.yr} Year)`;
+  if ($("verifiedEmailTxt")) $("verifiedEmailTxt").textContent = u.email;
 
   // 2. Top Nav Pill Morph (Circular Student Avatar + Emerald Verified Check Badge, Image 1 Style)
   $("navLogin").classList.add("nav-tab-avatar");
@@ -1215,24 +1207,7 @@ function handleAuthSuccess(email, displayName, uid) {
   if ($("popEmail")) $("popEmail").textContent = u.email;
   if ($("popBatch")) $("popBatch").textContent = `${u.dept} · Batch ${u.batch} (${u.yr} Year)`;
 
-  // 4. Welcome Card on Search Dashboard (Stay on Home Screen Experience)
-  if ($("homeWelcomeCard")) {
-    $("homeWelcomeCard").classList.remove("hide");
-    if ($("homeWelcomeAvatar")) $("homeWelcomeAvatar").textContent = u.name[0].toUpperCase();
-    if ($("homeWelcomeName")) $("homeWelcomeName").textContent = u.name;
-    if ($("homeWelcomeDept")) $("homeWelcomeDept").textContent = `${u.dept} · Batch ${u.batch} (${u.yr} Year)`;
-  }
-  if ($("homeContinueBtn")) {
-    $("homeContinueBtn").onclick = () => {
-      const destEl = $("dest");
-      if (destEl) {
-        destEl.scrollIntoView({ behavior: "smooth", block: "center" });
-        destEl.focus();
-      }
-    };
-  }
-
-  // 5. Two-Way AI Gender Identification (Way 1: Heuristic identification from institutional name & email)
+  // 4. Two-Way AI Gender Identification (Way 1: Heuristic identification from institutional name & email)
   const isFemale = isFemaleStudent(u.name, u.email);
   state.isFemale = isFemale;
   if (isFemale) {
@@ -1250,13 +1225,17 @@ function handleAuthSuccess(email, displayName, uid) {
     if ($("femToggle")) $("femToggle").checked = false;
   }
 
-  // Persist session to localStorage so user immediately stays on home screen on re-entry
+  // Persist session to localStorage so user immediately stays authenticated on re-entry
   try {
     localStorage.setItem("cit_cabsync_user", JSON.stringify(u));
   } catch (_) {}
 
-  show("s-home");
-  toast("Welcome, " + u.name + " 👋");
+  if (autoGoHome) {
+    show("s-home");
+    toast("Welcome back, " + u.name + " 👋");
+  } else {
+    show("s-login");
+  }
 
   // Sync profile document & login history to Cloud Firestore
   if (window.firebaseDb && window.firebaseFs && u.uid) {
@@ -2029,43 +2008,66 @@ if ($("btnCaptureId")) {
     } else {
       // High-fidelity fallback scan rendering matching the CIT Student ID card pattern
       const u = state.user || { name: "Aadhavan K", dept: "CSE", yr: 2, batch: 2025 };
-      canvas.width = 540;
-      canvas.height = 340;
+      canvas.width = 350;
+      canvas.height = 500;
       const ctx = canvas.getContext("2d");
       // White Card Base
       ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, 540, 340);
-      // Header Blue Band
-      ctx.fillStyle = "#0D47A1";
-      ctx.fillRect(0, 0, 540, 72);
+      ctx.fillRect(0, 0, 350, 500);
+      // Top right color wave
+      try {
+        const grad = ctx.createLinearGradient(180, 0, 350, 100);
+        grad.addColorStop(0, "#9c27b0");
+        grad.addColorStop(0.5, "#e91e63");
+        grad.addColorStop(1, "#00bcd4");
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(180, 0);
+        ctx.quadraticCurveTo(270, 30, 350, 90);
+        ctx.lineTo(350, 0);
+        ctx.closePath();
+        ctx.fill();
+      } catch (_) {}
+
+      // College Title
+      ctx.fillStyle = "#212121";
+      ctx.font = "800 16px sans-serif";
+      ctx.fillText("CHENNAI", 24, 40);
+      ctx.fillStyle = "#424242";
+      ctx.font = "700 14px sans-serif";
+      ctx.fillText("INSTITUTE OF", 24, 60);
+      ctx.fillStyle = "#1a237e";
+      ctx.font = "800 17px sans-serif";
+      ctx.fillText("TECHNOLOGY", 24, 82);
+
+      // Green Tagline
+      ctx.fillStyle = "#2e7d32";
+      ctx.fillRect(24, 94, 130, 18);
       ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 16px sans-serif";
-      ctx.fillText("CHENNAI INSTITUTE OF TECHNOLOGY", 60, 35);
-      ctx.font = "10.5px sans-serif";
-      ctx.fillText("Autonomous · Sarathy Nagar, Kundrathur, Chennai", 60, 54);
-      // Gold Identification Ribbon
-      ctx.fillStyle = "#FBBC04";
-      ctx.fillRect(0, 72, 540, 22);
-      ctx.fillStyle = "#1E293B";
-      ctx.font = "bold 11px sans-serif";
-      ctx.fillText("STUDENT IDENTITY CARD", 195, 87);
-      // Photo box
-      ctx.fillStyle = "#F1F5F9";
-      ctx.fillRect(30, 110, 105, 130);
-      ctx.strokeStyle = "#0D47A1";
-      ctx.strokeRect(30, 110, 105, 130);
-      ctx.fillStyle = "#64748B";
-      ctx.font = "bold 10px sans-serif";
-      ctx.fillText("CIT PHOTO", 55, 180);
-      // Details
-      ctx.fillStyle = "#0F172A";
-      ctx.font = "bold 15px sans-serif";
-      ctx.fillText(u.name.toUpperCase(), 160, 135);
-      ctx.fillStyle = "#64748B";
-      ctx.font = "11px sans-serif";
-      ctx.fillText("Dept: " + (u.dept || "CSE") + " (Year " + (u.yr || 2) + ")", 160, 165);
-      ctx.fillText("Reg No: 2104" + (u.batch || 2025) + "104000", 160, 190);
-      ctx.fillText("Validity: " + (u.batch - 4) + " - " + u.batch, 160, 215);
+      ctx.font = "italic bold 10px Georgia, serif";
+      ctx.fillText("Transforming Lives", 32, 107);
+
+      // Photo Circle
+      ctx.beginPath();
+      ctx.arc(175, 205, 55, 0, Math.PI * 2);
+      ctx.fillStyle = "#0288d1";
+      ctx.fill();
+      ctx.strokeStyle = "#b3e5fc";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // Student Details
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#212121";
+      ctx.font = "800 18px sans-serif";
+      ctx.fillText(u.name.toUpperCase(), 175, 305);
+      ctx.fillStyle = "#424242";
+      ctx.font = "700 15px sans-serif";
+      ctx.fillText((u.dept || "CSE") + " DEPARTMENT", 175, 335);
+      ctx.fillStyle = "#263238";
+      ctx.font = "700 16px sans-serif";
+      ctx.fillText("BATCH " + (u.batch || 2025), 175, 365);
+      ctx.textAlign = "start";
       dataUrl = canvas.toDataURL("image/jpeg", 0.9);
     }
 
