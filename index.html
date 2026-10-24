@@ -235,13 +235,6 @@ select:focus,input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,1
 .send button:active{transform:scale(.9)}
 .note{font-size:12px;color:var(--muted);margin-top:12px;text-align:center;line-height:1.5}
 
-/* ============ ACCOUNT PICKER ============ */
-.acct{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);color:var(--ink);
-  border:1.5px solid var(--line);border-radius:var(--radius);padding:14px;margin-top:10px;
-  transition:all var(--transition)}
-.acct:hover{background:var(--blue-soft);border-color:var(--blue)}
-.acct .av{width:40px;height:40px;flex:none}
-.acct b{display:block;font-size:15px}.acct small{color:var(--muted);font-size:12px}
 
 /* ============ CAMERA ============ */
 video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:14px}
@@ -555,33 +548,6 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
   </div>
 </div>
 
-<!-- ==================== GOOGLE ACCOUNT PICKER ==================== -->
-<div class="ov" id="acctOv">
-  <div class="sheet" role="dialog" aria-label="Choose a Google account">
-    <div class="top"><h2>Choose an account</h2><button class="x" data-close aria-label="Close">✕</button></div>
-    <p class="muted" style="margin-top:4px">to continue to CIT CabSync</p>
-
-    <button class="acct" data-email="aadhavank.cse2025@citchennai.net">
-      <span id="a1"></span>
-      <span><b>Aadhavan K</b><small>aadhavank.cse2025@citchennai.net</small></span>
-    </button>
-    <button class="acct" data-email="prathik.ece2025@citchennai.net">
-      <span id="a2"></span>
-      <span><b>Prathik</b><small>prathik.ece2025@citchennai.net</small></span>
-    </button>
-    <button class="acct" data-email="nisha.cse2024@citchennai.net">
-      <span id="a3"></span>
-      <span><b>Nisha</b><small>nisha.cse2024@citchennai.net</small></span>
-    </button>
-
-    <div class="divider">Other accounts</div>
-
-    <button class="acct" data-email="guest.user@gmail.com">
-      <span id="a4"></span>
-      <span><b>Guest User</b><small>guest.user@gmail.com</small></span>
-    </button>
-  </div>
-</div>
 
 <!-- ==================== CAMERA OVERLAY ==================== -->
 <div class="ov" id="camOv">
@@ -730,16 +696,19 @@ function show(id) {
 $("navLogin").onclick = () => show("s-login");
 $("navHome").onclick = () => {
   if (!state.user) {
-    state.user = parseEmail("aadhavank.cse2025@citchennai.net");
-    $("meAv").outerHTML = avatar(state.user.name, 0, 44).replace('class="av"', 'class="av" id="meAv"');
-    $("meName").textContent = state.user.name;
-    $("meInfo").textContent = `${state.user.dept} · ${ordinal(state.user.yr)} Year (Batch ${state.user.batch})`;
+    toast("Please sign in with your @citchennai.net account first");
+    show("s-login");
+    return;
   }
   show("s-home");
 };
 $("navLobby").onclick = () => {
+  if (!state.user) {
+    toast("Please sign in with your @citchennai.net account first");
+    show("s-login");
+    return;
+  }
   if (!state.lobby) {
-    if (!state.user) state.user = parseEmail("aadhavank.cse2025@citchennai.net");
     $("find").click();
   } else {
     show("s-lobby");
@@ -806,35 +775,46 @@ window.handleAuthSuccess = handleAuthSuccess;
 $("loginBtn").onclick = async () => {
   $("loginErr").textContent = "";
 
-  if (window.firebaseAuth && window.googleProvider && window.signInWithPopup) {
-    try {
-      const result = await window.signInWithPopup(window.firebaseAuth, window.googleProvider);
-      const user = result.user;
-      if (!user.email || !user.email.endsWith(DOMAIN)) {
-        if (window.signOut) await window.signOut(window.firebaseAuth);
-        $("loginErr").textContent = "Blocked: only " + DOMAIN + " Google accounts are allowed.";
-        return;
-      }
-      handleAuthSuccess(user.email, user.displayName, user.uid);
-      return;
-    } catch (err) {
-      console.warn("Firebase popup sign-in note:", err);
-    }
-  }
-
-  [1, 2, 3, 4].forEach((n, i) => $("a" + n).innerHTML = avatar("acct", i, 40));
-  $("acctOv").classList.add("on");
-};
-
-document.querySelectorAll(".acct").forEach(b => b.onclick = () => {
-  const e = b.dataset.email;
-  $("acctOv").classList.remove("on");
-  if (!e.endsWith(DOMAIN)) {
-    $("loginErr").textContent = "Blocked: only " + DOMAIN + " Google accounts are allowed.";
+  if (!window.firebaseAuth || !window.googleProvider || !window.signInWithPopup) {
+    $("loginErr").textContent = "Connecting to Firebase Authentication... Please wait a moment and try again.";
     return;
   }
-  handleAuthSuccess(e);
-});
+
+  const btn = $("loginBtn");
+  btn.style.pointerEvents = "none";
+  btn.style.opacity = "0.7";
+
+  try {
+    const result = await window.signInWithPopup(window.firebaseAuth, window.googleProvider);
+    const user = result.user;
+    const email = (user && user.email) ? user.email.toLowerCase().trim() : "";
+
+    if (!email || !email.endsWith(DOMAIN)) {
+      if (window.signOut) {
+        await window.signOut(window.firebaseAuth);
+      }
+      $("loginErr").textContent = "Blocked: only " + DOMAIN + " Google accounts are allowed.";
+      toast("Access denied: Not a CIT account ✕");
+      return;
+    }
+
+    handleAuthSuccess(email, user.displayName, user.uid);
+  } catch (err) {
+    console.error("Firebase sign-in error:", err);
+    if (err.code === "auth/popup-closed-by-user" || err.code === "auth/cancelled-popup-request") {
+      $("loginErr").textContent = "Sign-in popup closed.";
+    } else if (err.code === "auth/unauthorized-domain") {
+      $("loginErr").textContent = "Domain not authorized in Firebase Auth. Add domain to Firebase Console -> Authorized Domains.";
+    } else if (err.code === "auth/operation-not-allowed") {
+      $("loginErr").textContent = "Google Sign-in is disabled in Firebase Console. Please enable Google provider.";
+    } else {
+      $("loginErr").textContent = err.message || "Failed to sign in with Google.";
+    }
+  } finally {
+    btn.style.pointerEvents = "";
+    btn.style.opacity = "";
+  }
+};
 
 $("logout").onclick = async () => {
   if (window.firebaseAuth && window.signOut) {
@@ -986,10 +966,15 @@ let unsubscribeRide = null;
 let unsubscribeChat = null;
 
 $("find").onclick = async () => {
+  if (!state.user) {
+    toast("Please sign in with your @citchennai.net account first");
+    show("s-login");
+    return;
+  }
   const pts = myPts();
   if (pts < 1) { $("homeErr").textContent = "Add at least one bag."; return; }
   $("homeErr").textContent = "";
-  const u = state.user || parseEmail("aadhavank.cse2025@citchennai.net"), fem = $("fem").checked;
+  const u = state.user, fem = $("fem").checked;
   const timeStr = getSelectedTime();
   const L = {
     dest: $("dest").value, dir: state.dir, date: $("tripDate").value,
