@@ -268,22 +268,76 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
 .route-visual .line{flex:1;height:2px;background:var(--blue);opacity:.3}
 .route-visual .arrow-icon{font-size:16px;flex:none}
 
-/* ============ TOP NAVIGATION (Google Segmented Bar - Image 2) ============ */
-.top-nav-wrap{display:flex;justify-content:center;margin-bottom:18px}
-.top-nav{background:#EEF2F6;border-radius:var(--radius-full);padding:4px;
-  display:inline-flex;gap:4px;box-shadow:inset 0 1px 2px rgba(0,0,0,.04)}
-.nav-tab{border-radius:var(--radius-full);padding:7px 18px;font-size:13.5px;font-weight:600;
-  color:var(--muted);transition:all var(--transition);display:inline-flex;align-items:center;justify-content:center;gap:6px}
-.nav-tab svg{flex-shrink:0;transition:transform var(--transition),stroke var(--transition)}
+/* ============ STICKY TOP APP HEADER ============ */
+.app-header{
+  position:sticky;top:0;z-index:80;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:10px 0;margin-bottom:14px;
+  background:rgba(248,249,250,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(227,232,239,.6);
+}
+.brand-lockup-top{display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none;flex-shrink:0}
+.gdg-bracket-icon{display:flex;align-items:center;justify-content:center;transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+.brand-lockup-top:hover .gdg-bracket-icon,.brand-lockup-top:active .gdg-bracket-icon{transform:rotate(12deg) scale(1.15)}
+.brand-title-top{font-weight:700;color:#202124;font-size:16px;letter-spacing:-.01em;white-space:nowrap}
+
+/* Segmented Navigation (Animated Sliding Pill Track) */
+.top-nav-wrap{position:relative;display:inline-flex;justify-content:flex-end}
+.top-nav{position:relative;background:#F1F3F4;border-radius:var(--radius-full);padding:3px;
+  display:inline-flex;align-items:center;gap:2px;box-shadow:inset 0 1px 2px rgba(0,0,0,.04);z-index:2}
+.nav-indicator{position:absolute;top:3px;bottom:3px;left:0;border-radius:var(--radius-full);
+  background:#fff;box-shadow:0 2px 8px rgba(26,115,232,.18),0 1px 3px rgba(60,64,67,.12);
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1),width .3s ease;
+  pointer-events:none;z-index:1}
+.nav-tab{position:relative;z-index:2;border-radius:var(--radius-full);padding:6px 12px;font-size:13px;font-weight:600;
+  color:var(--muted);transition:color .25s ease;display:inline-flex;align-items:center;justify-content:center;gap:5px;
+  background:transparent;border:none;cursor:pointer}
+.nav-tab svg{flex-shrink:0;transition:transform .35s cubic-bezier(.34,1.56,.64,1),stroke .25s ease}
 .nav-tab:hover{color:var(--ink)}
-.nav-tab.active{background:#fff;color:var(--blue);font-weight:700;
-  box-shadow:0 1px 4px rgba(60,64,67,.18),0 1px 2px rgba(60,64,67,.1)}
-.nav-tab.active svg{stroke:var(--blue);transform:scale(1.08)}
+.nav-tab.active{color:var(--blue);font-weight:700}
+.nav-tab.active svg{stroke:var(--blue);transform:translateY(-2px) scale(1.12)}
+
+/* Post-Login Morphed Nav Avatar & Emerald Pulse */
+@keyframes emeraldPulse{
+  0%{box-shadow:0 0 0 0 rgba(52,168,83,.6)}
+  70%{box-shadow:0 0 0 7px rgba(52,168,83,0)}
+  100%{box-shadow:0 0 0 0 rgba(52,168,83,0)}
+}
+.morphed-nav-badge{position:relative;width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--green));
+  color:#fff;display:grid;place-items:center;font-size:11px;font-weight:800;flex-shrink:0;animation:emeraldPulse 2s infinite}
+.morphed-nav-check{position:absolute;bottom:-2px;right:-3px;width:10px;height:10px;border-radius:50%;
+  background:var(--green);color:#fff;font-size:7px;font-weight:900;display:grid;place-items:center;border:1.5px solid #fff}
+
+/* Profile Popover */
+.nav-profile-popover{position:absolute;top:calc(100% + 8px);right:0;
+  width:290px;background:var(--card);border-radius:18px;padding:14px;box-shadow:0 8px 30px rgba(0,0,0,.15);
+  border:1px solid var(--line);z-index:95;animation:screenIn .25s cubic-bezier(.34,1.56,.64,1)}
+.pop-user-info{display:flex;gap:10px;align-items:center}
+.pop-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#1557B0);color:#fff;
+  font-weight:800;display:grid;place-items:center;font-size:15px;flex-shrink:0}
+.pop-btn{padding:7px 14px;border-radius:var(--radius-full);font-size:12px;font-weight:700;
+  border:1px solid var(--line);background:var(--bg);cursor:pointer;transition:all var(--transition)}
+.pop-btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.pop-btn:hover{opacity:.9}
+
+@media(max-width:380px){
+  .app-header{flex-wrap:wrap;gap:6px}
+  .brand-title-top{font-size:15px}
+  .nav-tab{padding:5px 9px;font-size:12px}
+}
+
+/* ============ VERIFIED CIT STUDENT CARD (User Screenshot) ============ */
+.verified-card{background:var(--card);border-radius:var(--radius);padding:22px 20px;border:1.5px solid #D2E3FC;
+  box-shadow:0 4px 18px rgba(66,133,244,.1);animation:pop .4s cubic-bezier(.2,1.4,.4,1)}
+.verified-header{display:flex;align-items:center;gap:14px}
+.verified-badge-icon{width:38px;height:38px;border-radius:50%;background:var(--green);
+  display:grid;place-items:center;flex-shrink:0;box-shadow:0 3px 10px rgba(52,168,83,.3)}
+.verified-badge-icon svg{stroke:#fff}
 
 /* ============ BRAND LOCKUP ============ */
-.brand-lockup{display:inline-flex;align-items:center;gap:12px;margin-bottom:8px}
-.brand-logo{width:46px;height:46px;border-radius:12px;box-shadow:0 3px 12px rgba(66,133,244,.18);flex-shrink:0;transition:transform .3s cubic-bezier(.34,1.56,.64,1);cursor:pointer}
-.brand-logo:hover{transform:rotate(8deg) scale(1.08)}
+.brand-lockup{display:inline-flex;align-items:center;gap:12px;margin-bottom:8px;cursor:pointer}
+.brand-logo{width:46px;height:46px;border-radius:12px;box-shadow:0 3px 12px rgba(66,133,244,.18);flex-shrink:0;transition:transform .35s cubic-bezier(.34,1.56,.64,1);cursor:pointer}
+.brand-logo:hover,.brand-lockup:hover .brand-logo{transform:rotate(8deg) scale(1.08)}
 
 /* ============ 12-HOUR TIME PICKER (with AM / PM) ============ */
 .dt-container{display:flex;flex-direction:column;gap:10px}
@@ -346,28 +400,63 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
 <body>
 <div class="app">
 
-<!-- ==================== TOP NAVIGATION (Image 2) ==================== -->
-<div class="top-nav-wrap">
-  <nav class="top-nav" aria-label="Screen Navigation">
-    <button type="button" class="nav-tab active" id="navLogin" data-target="s-login" aria-label="Login">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <span>Login</span>
-    </button>
-    <button type="button" class="nav-tab" id="navHome" data-target="s-home" aria-label="Search">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <span>Search</span>
-    </button>
-    <button type="button" class="nav-tab" id="navLobby" data-target="s-lobby" aria-label="Lobby">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 10.7 2 11 2 11.4V16c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
-      <span>Lobby</span>
-    </button>
-  </nav>
-</div>
+<!-- ==================== STICKY TOP APP HEADER ==================== -->
+<header class="app-header" id="appHeader">
+  <div class="brand-lockup-top" id="brandLockupTop" role="button" tabindex="0" title="Back to top">
+    <div class="gdg-bracket-icon" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 28 28" fill="none">
+        <!-- Red < bracket -->
+        <path d="M8 8L3 14L8 20" stroke="#EA4335" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Blue / slash -->
+        <line x1="11.5" y1="21" x2="16.5" y2="7" stroke="#4285F4" stroke-width="2.6" stroke-linecap="round"/>
+        <!-- Green > bracket -->
+        <path d="M20 8L25 14L20 20" stroke="#34A853" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Yellow dot -->
+        <circle cx="14" cy="14" r="1.5" fill="#FBBC04"/>
+      </svg>
+    </div>
+    <span class="brand-title-top">CIT CabSync</span>
+  </div>
+
+  <div class="top-nav-wrap">
+    <nav class="top-nav" id="topNavTrack" aria-label="Screen Navigation">
+      <div class="nav-indicator" id="navIndicator"></div>
+      <button type="button" class="nav-tab active" id="navLogin" data-target="s-login" aria-label="Login">
+        <svg class="nav-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span id="navLoginLabel">Login</span>
+      </button>
+      <button type="button" class="nav-tab" id="navHome" data-target="s-home" aria-label="Search">
+        <svg class="nav-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span>Search</span>
+      </button>
+      <button type="button" class="nav-tab" id="navLobby" data-target="s-lobby" aria-label="Lobby">
+        <svg class="nav-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 10.7 2 11 2 11.4V16c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+        <span>Lobby</span>
+      </button>
+    </nav>
+
+    <!-- Mini Profile Popover on morphed avatar tap -->
+    <div class="nav-profile-popover hide" id="navProfilePopover">
+      <div class="pop-user-info">
+        <div class="pop-avatar" id="popAvatar">A</div>
+        <div style="min-width:0;flex:1">
+          <b id="popName" style="font-size:14px;display:block">Student</b>
+          <small id="popDept" style="color:var(--muted);font-size:12px;display:block"></small>
+          <div id="popEmail" style="color:var(--blue);font-size:11.5px;word-break:break-all;font-weight:600;margin-top:2px"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">
+        <button type="button" class="pop-btn primary" id="popGoSearch" style="flex:1">Search Rides →</button>
+        <button type="button" class="pop-btn" id="popLogout" style="color:var(--red)">Sign out</button>
+      </div>
+    </div>
+  </div>
+</header>
 
 <!-- ==================== 1. LOGIN SCREEN ==================== -->
 <section class="screen on" id="s-login">
   <div class="hero">
-    <div class="brand-lockup">
+    <div class="brand-lockup" id="brandLockupBtn" role="button" tabindex="0" title="Back to top">
       <img src="cabsync.svg" class="brand-logo" alt="CIT CabSync Logo" width="46" height="46">
       <h1>
         <span style="color:#4285F4">C</span><span style="color:#EA4335">I</span><span style="color:#FBBC04">T</span>
@@ -384,13 +473,36 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
     </div>
   </div>
 
-  <div class="card">
+  <!-- Pre-Login Card -->
+  <div class="card" id="preLoginCard">
     <button class="btn gbtn" id="loginBtn">
       <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC04" d="M10.5 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C.9 16.4 0 20.1 0 24s.9 7.6 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.2 1.5-5 2.3-8.2 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
       Sign in with Google (@citchennai.net)
     </button>
     <div class="err" id="loginErr" style="text-align:center"></div>
     <p class="note">Restricted to CIT institutional accounts only.<br>Non-college emails will be blocked.</p>
+  </div>
+
+  <!-- Verified CIT Student Card (Matches User Reference Image) -->
+  <div class="verified-card hide" id="postLoginCard">
+    <div class="verified-header">
+      <div class="verified-badge-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <div>
+        <b style="font-size:16px;color:var(--ink);display:block">Verified CIT Student</b>
+        <div class="verified-sub" id="verifiedSub" style="font-size:13.5px;color:var(--muted);font-weight:600;margin-top:2px"></div>
+      </div>
+    </div>
+    <p class="verified-email" style="margin-top:14px;font-size:13px;color:var(--muted)">Signed in as <b id="verifiedEmailTxt" style="color:var(--ink)"></b></p>
+    <button type="button" class="btn" id="continueSearchBtn" style="margin-top:16px">
+      Continue to Ride Search →
+    </button>
+    <div style="text-align:center;margin-top:12px">
+      <button type="button" id="switchAccountBtn" style="font-size:13px;color:var(--muted);cursor:pointer;text-decoration:underline;background:none;border:none">Switch Account / Sign Out</button>
+    </div>
   </div>
 </section>
 
@@ -707,6 +819,20 @@ function toast(msg) {
   clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove("show"), 3200);
 }
 
+/* ============ SLIDING INDICATOR & NAVIGATION ============ */
+function updateNavIndicator() {
+  const activeTab = document.querySelector(".nav-tab.active");
+  const track = $("topNavTrack");
+  const ind = $("navIndicator");
+  if (!activeTab || !track || !ind) return;
+  const trackRect = track.getBoundingClientRect();
+  const tabRect = activeTab.getBoundingClientRect();
+  ind.style.transform = `translateX(${tabRect.left - trackRect.left}px)`;
+  ind.style.width = `${tabRect.width}px`;
+}
+window.addEventListener("resize", updateNavIndicator);
+setTimeout(updateNavIndicator, 60);
+
 function show(id) {
   document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === id));
   $("payBar").classList.toggle("on", id === "s-lobby");
@@ -715,10 +841,23 @@ function show(id) {
   $("navHome").classList.toggle("active", id === "s-home");
   $("navLobby").classList.toggle("active", id === "s-lobby");
 
+  if ($("navProfilePopover")) $("navProfilePopover").classList.add("hide");
+
+  setTimeout(updateNavIndicator, 20);
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-$("navLogin").onclick = () => show("s-login");
+$("navLogin").onclick = () => {
+  if (state.user) {
+    if (document.getElementById("s-login").classList.contains("on")) {
+      $("navProfilePopover").classList.toggle("hide");
+    } else {
+      show("s-login");
+    }
+  } else {
+    show("s-login");
+  }
+};
 $("navHome").onclick = () => {
   if (!state.user) {
     toast("Please sign in with your @citchennai.net account first");
@@ -739,6 +878,17 @@ $("navLobby").onclick = () => {
     show("s-lobby");
   }
 };
+document.addEventListener("click", e => {
+  if (!e.target.closest(".top-nav-wrap")) {
+    if ($("navProfilePopover")) $("navProfilePopover").classList.add("hide");
+  }
+});
+if ($("brandLockupBtn")) {
+  $("brandLockupBtn").onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
+}
+if ($("brandLockupTop")) {
+  $("brandLockupTop").onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
+}
 
 function ordinal(n) { return n === 1 ? "1st" : n === 2 ? "2nd" : n === 3 ? "3rd" : n + "th"; }
 
@@ -774,9 +924,33 @@ function handleAuthSuccess(email, displayName, uid) {
   if (displayName) state.user.name = displayName;
   if (uid) state.user.uid = uid;
   const u = state.user;
+
+  // 1. Update Me Chip in Search Screen
   $("meAv").outerHTML = avatar(u.name, 0, 44).replace('class="av"', 'class="av" id="meAv"');
   $("meName").textContent = u.name;
   $("meInfo").textContent = `${u.dept} · ${ordinal(u.yr)} Year (Batch ${u.batch})`;
+
+  // 2. Post-Login Hero Card Transformation (Matches user reference image)
+  $("preLoginCard").classList.add("hide");
+  $("postLoginCard").classList.remove("hide");
+  $("verifiedSub").textContent = `${u.name.toUpperCase()} (${u.dept} · ${u.yr} Year)`;
+  $("verifiedEmailTxt").textContent = u.email;
+
+  // 3. Top Nav Pill Morph (Circular Student Avatar + Emerald Verified Check Badge)
+  $("navLogin").innerHTML = `
+    <div class="morphed-nav-badge">
+      <span>${u.name[0].toUpperCase()}</span>
+      <span class="morphed-nav-check">✓</span>
+    </div>
+    <span id="navLoginLabel">${u.name.split(" ")[0]}</span>
+  `;
+
+  // 4. Popover Profile Mini-Badge
+  $("popAvatar").textContent = u.name[0].toUpperCase();
+  $("popName").textContent = u.name;
+  $("popDept").textContent = `${u.dept} · ${ordinal(u.yr)} Year (Batch ${u.batch})`;
+  $("popEmail").textContent = u.email;
+
   show("s-home");
   toast("Welcome, " + u.name + " 👋");
 
@@ -810,6 +984,31 @@ function handleAuthSuccess(email, displayName, uid) {
   }
 }
 window.handleAuthSuccess = handleAuthSuccess;
+
+async function signOutUser() {
+  if (window.firebaseAuth && window.signOut) {
+    try { await window.signOut(window.firebaseAuth); } catch (_) {}
+  }
+  state.user = null;
+  state.joined = false;
+  $("preLoginCard").classList.remove("hide");
+  $("postLoginCard").classList.add("hide");
+  $("navLogin").innerHTML = `
+    <svg class="nav-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span id="navLoginLabel">Login</span>
+  `;
+  $("navProfilePopover").classList.add("hide");
+  show("s-login");
+  toast("Signed out successfully");
+}
+$("logout").onclick = signOutUser;
+$("popLogout").onclick = signOutUser;
+$("switchAccountBtn").onclick = signOutUser;
+$("continueSearchBtn").onclick = () => show("s-home");
+$("popGoSearch").onclick = () => {
+  $("navProfilePopover").classList.add("hide");
+  show("s-home");
+};
 
 $("loginBtn").onclick = async () => {
   $("loginErr").textContent = "";
@@ -853,15 +1052,6 @@ $("loginBtn").onclick = async () => {
     btn.style.pointerEvents = "";
     btn.style.opacity = "";
   }
-};
-
-$("logout").onclick = async () => {
-  if (window.firebaseAuth && window.signOut) {
-    try { await window.signOut(window.firebaseAuth); } catch (_) {}
-  }
-  state.user = null;
-  state.joined = false;
-  show("s-login");
 };
 
 /* ============ SEARCH FORM ============ */
@@ -1097,133 +1287,131 @@ $("find").onclick = async () => {
     hasMyVote: false
   };
 
-  // Live Firestore database synchronization
-  if (window.firebaseDb && window.firebaseFs) {
-    const { doc, collection, onSnapshot, runTransaction, setDoc, query, where, getDocs, serverTimestamp, orderBy } = window.firebaseFs;
-    const db = window.firebaseDb;
-    try {
-      const ridesRef = collection(db, "rides");
-      const q = query(
-        ridesRef,
-        where("direction", "==", L.dir),
-        where("destination", "==", L.dest),
-        where("status", "==", "OPEN")
-      );
-      const snapshot = await getDocs(q);
-      let matchedDoc = null;
-
-      for (const d of snapshot.docs) {
-        const data = d.data();
-        const maxLug = data.maxLuggageUnits || 7;
-        const maxPax = data.maxPassengers || 4;
-        if ((data.currentLuggageUnits || 0) + pts <= maxLug && (data.currentPassengers || 0) + 1 <= maxPax) {
-          matchedDoc = d;
-          break;
-        }
-      }
-
-      let rideId;
-      if (matchedDoc) {
-        rideId = matchedDoc.id;
-        const rideRef = doc(db, "rides", rideId);
-        await runTransaction(db, async (txn) => {
-          const snap = await txn.get(rideRef);
-          if (!snap.exists()) throw new Error("Ride not found");
-          const rData = snap.data();
-          const curLug = rData.currentLuggageUnits || 0;
-          const curP = rData.currentPassengers || 0;
-          const maxL = rData.maxLuggageUnits || 7;
-          const maxP = rData.maxPassengers || 4;
-
-          if (curLug + pts > maxL) throw new Error(`Luggage overload. Available: ${maxL - curLug} pts.`);
-          if (curP + 1 > maxP) throw new Error("Vehicle is full.");
-
-          const newPax = [...(rData.pax || []), myPax];
-          const newLug = curLug + pts;
-          const newP = curP + 1;
-          txn.update(rideRef, {
-            pax: newPax,
-            currentLuggageUnits: newLug,
-            currentPassengers: newP,
-            status: (newP >= maxP || newLug >= maxL) ? "FULL" : "OPEN",
-            updatedAt: serverTimestamp()
-          });
-        });
-      } else {
-        const newRef = doc(ridesRef);
-        rideId = newRef.id;
-        await setDoc(newRef, {
-          rideId,
-          leaderUid: u.uid || "anon",
-          leaderName: u.name,
-          destination: L.dest,
-          direction: L.dir,
-          departureDate: L.date,
-          departureTime: L.time,
-          vehicleType: L.car.n,
-          maxLuggageUnits: L.car.max,
-          currentLuggageUnits: pts,
-          maxPassengers: 4,
-          currentPassengers: 1,
-          status: "OPEN",
-          pax: [myPax],
-          createdAt: serverTimestamp()
-        });
-      }
-
-      L.rideId = rideId;
-      state.lobby = L;
-
-      // Real-time listener on ride document (pax and shared QR code sync)
-      if (unsubscribeRide) unsubscribeRide();
-      unsubscribeRide = onSnapshot(doc(db, "rides", rideId), (snap) => {
-        if (snap.exists()) {
-          const rData = snap.data();
-          state.lobby.pax = (rData.pax || []).map(p => ({
-            ...p,
-            me: (u.uid && p.uid === u.uid) || p.name === u.name
-          }));
-          if (rData.qrCodeDataUrl && $("qrBox")) {
-            $("qrBox").innerHTML = `
-              <img src="${rData.qrCodeDataUrl}" alt="Trip leader GPay QR" style="max-width:100%;max-height:220px;border-radius:12px;display:block;margin:0 auto 8px;">
-              <small class="muted" style="display:block;font-size:12px;font-weight:600">Pinned by ${rData.qrCodeUploadedBy || "Trip Leader"}</small>
-            `;
-          }
-          render();
-        }
-      });
-
-      // Real-time listener on messages subcollection
-      if (unsubscribeChat) unsubscribeChat();
-      const msgsRef = collection(db, "rides", rideId, "messages");
-      const msgsQ = query(msgsRef, orderBy("createdAt", "asc"));
-      unsubscribeChat = onSnapshot(msgsQ, (snap) => {
-        chatEl.innerHTML = "";
-        if (snap.empty) {
-          addMsg("Nisha", "Hi all! I'll book the cab and pin my GPay QR here.");
-        } else {
-          snap.forEach(d => {
-            const m = d.data();
-            addMsg(m.senderName, m.text, (u.uid && m.senderUid === u.uid) || m.senderName === u.name);
-          });
-        }
-      });
-
-      render();
-      show("s-lobby");
-      return;
-    } catch (err) {
-      console.warn("Firestore live lobby fallback to simulated lobby:", err);
-    }
-  }
-
-  // Local simulated fallback
   try { joinTransaction(L, myPax); }
   catch (e) { $("homeErr").textContent = e.message; return; }
 
   state.lobby = L;
+
+  // 1. ZERO-LAG OPTIMISTIC SWITCH: Instant 60fps render
   render();
   show("s-lobby");
+
+  // 2. BACKGROUND NON-BLOCKING ASYNC FIRESTORE SYNC
+  if (window.firebaseDb && window.firebaseFs) {
+    (async () => {
+      try {
+        const { doc, collection, onSnapshot, runTransaction, setDoc, query, where, getDocs, serverTimestamp, orderBy } = window.firebaseFs;
+        const db = window.firebaseDb;
+        const ridesRef = collection(db, "rides");
+        const q = query(
+          ridesRef,
+          where("direction", "==", L.dir),
+          where("destination", "==", L.dest),
+          where("status", "==", "OPEN")
+        );
+        const snapshot = await getDocs(q);
+        let matchedDoc = null;
+
+        for (const d of snapshot.docs) {
+          const data = d.data();
+          const maxLug = data.maxLuggageUnits || 7;
+          const maxPax = data.maxPassengers || 4;
+          if ((data.currentLuggageUnits || 0) + pts <= maxLug && (data.currentPassengers || 0) + 1 <= maxPax) {
+            matchedDoc = d;
+            break;
+          }
+        }
+
+        let rideId;
+        if (matchedDoc) {
+          rideId = matchedDoc.id;
+          const rideRef = doc(db, "rides", rideId);
+          await runTransaction(db, async (txn) => {
+            const snap = await txn.get(rideRef);
+            if (!snap.exists()) return;
+            const rData = snap.data();
+            const curLug = rData.currentLuggageUnits || 0;
+            const curP = rData.currentPassengers || 0;
+            const maxL = rData.maxLuggageUnits || 7;
+            const maxP = rData.maxPassengers || 4;
+
+            if (curLug + pts > maxL || curP + 1 > maxP) return;
+
+            const newPax = [...(rData.pax || []), myPax];
+            const newLug = curLug + pts;
+            const newP = curP + 1;
+            txn.update(rideRef, {
+              pax: newPax,
+              currentLuggageUnits: newLug,
+              currentPassengers: newP,
+              status: (newP >= maxP || newLug >= maxL) ? "FULL" : "OPEN",
+              updatedAt: serverTimestamp()
+            });
+          });
+        } else {
+          const newRef = doc(ridesRef);
+          rideId = newRef.id;
+          await setDoc(newRef, {
+            rideId,
+            leaderUid: u.uid || "anon",
+            leaderName: u.name,
+            destination: L.dest,
+            direction: L.dir,
+            departureDate: L.date,
+            departureTime: L.time,
+            vehicleType: L.car.n,
+            maxLuggageUnits: L.car.max,
+            currentLuggageUnits: pts,
+            maxPassengers: 4,
+            currentPassengers: 1,
+            status: "OPEN",
+            pax: [myPax],
+            createdAt: serverTimestamp()
+          });
+        }
+
+        L.rideId = rideId;
+
+        // Real-time listener on ride document (pax and shared QR code sync)
+        if (unsubscribeRide) unsubscribeRide();
+        unsubscribeRide = onSnapshot(doc(db, "rides", rideId), (snap) => {
+          if (snap.exists()) {
+            const rData = snap.data();
+            state.lobby.pax = (rData.pax || []).map(p => ({
+              ...p,
+              me: (u.uid && p.uid === u.uid) || p.name === u.name
+            }));
+            if (rData.qrCodeDataUrl && $("qrBox")) {
+              $("qrBox").innerHTML = `
+                <img src="${rData.qrCodeDataUrl}" alt="Trip leader GPay QR" style="max-width:100%;max-height:220px;border-radius:12px;display:block;margin:0 auto 8px;">
+                <small class="muted" style="display:block;font-size:12px;font-weight:600">Pinned by ${rData.qrCodeUploadedBy || "Trip Leader"}</small>
+              `;
+            }
+            render();
+          }
+        });
+
+        // Real-time listener on messages subcollection
+        if (unsubscribeChat) unsubscribeChat();
+        const msgsRef = collection(db, "rides", rideId, "messages");
+        const msgsQ = query(msgsRef, orderBy("createdAt", "asc"));
+        unsubscribeChat = onSnapshot(msgsQ, (snap) => {
+          chatEl.innerHTML = "";
+          if (snap.empty) {
+            addMsg("Nisha", "Hi all! I'll book the cab and pin my GPay QR here.");
+          } else {
+            snap.forEach(d => {
+              const m = d.data();
+              addMsg(m.senderName, m.text, (u.uid && m.senderUid === u.uid) || m.senderName === u.name);
+            });
+          }
+        });
+      } catch (err) {
+        console.warn("Background Firestore sync:", err);
+      }
+    })();
+  }
+};
 
   clearTimeout(state.sim);
   state.sim = setTimeout(() => {
