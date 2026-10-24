@@ -1,7 +1,7 @@
 # CIT CabSync — System Architecture & Engineering Specification
 
 **Document Control:** Production Engineering Specification  
-**Project Target:** GDG HackBuild '26  
+**Project Target:** CIT Campus Transit Network  
 **Ecosystem Alignment:** Google Cloud Platform (GCP) & Firebase Production Standards  
 **Target Platform:** Mobile-First Progressive Web App (PWA)  
 
@@ -384,7 +384,7 @@ service cloud.firestore {
 
 ## 9. Professional Git Version Control & Release Engineering Protocol
 
-To maintain high code quality and present a pristine, audit-ready repository for GDG evaluators and open-source contributors, the project strictly rejects micro-commits (e.g., *"fixed typo"*, *"updated css"*, *"testing"*, *"wip"*). Commits must represent atomic, high-value functional milestones.
+To maintain high code quality and present a pristine, audit-ready repository for technical evaluators and open-source contributors, the project strictly rejects micro-commits (e.g., *"fixed typo"*, *"updated css"*, *"testing"*, *"wip"*). Commits must represent atomic, high-value functional milestones.
 
 ### 9.1 Commit Philosophy: Atomic Milestone Deliverables
 Every commit pushed to the remote repository must satisfy three criteria:
