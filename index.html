@@ -271,16 +271,80 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
 .route-visual .line{flex:1;height:2px;background:var(--blue);opacity:.3}
 .route-visual .arrow-icon{font-size:16px;flex:none}
 
-/* ============ DATE-TIME ROW ============ */
-.dt-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.dt-row input[type=date]{width:100%;min-height:48px;border-radius:var(--radius-sm);
+/* ============ TOP NAVIGATION (Google Segmented Bar - Image 2) ============ */
+.top-nav-wrap{display:flex;justify-content:center;margin-bottom:18px}
+.top-nav{background:#EEF2F6;border-radius:var(--radius-full);padding:4px;
+  display:inline-flex;gap:4px;box-shadow:inset 0 1px 2px rgba(0,0,0,.04)}
+@media(prefers-color-scheme:dark){
+  .top-nav{background:#262A30}
+}
+.nav-tab{border-radius:var(--radius-full);padding:7px 20px;font-size:14px;font-weight:600;
+  color:var(--muted);transition:all var(--transition)}
+.nav-tab:hover{color:var(--ink)}
+.nav-tab.active{background:#fff;color:var(--blue);font-weight:700;
+  box-shadow:0 1px 4px rgba(60,64,67,.18),0 1px 2px rgba(60,64,67,.1)}
+@media(prefers-color-scheme:dark){
+  .nav-tab.active{background:#1E2125;color:var(--blue)}
+}
+
+/* ============ 12-HOUR TIME PICKER (with AM / PM) ============ */
+.dt-container{display:flex;flex-direction:column;gap:10px}
+.dt-container input[type=date]{width:100%;min-height:48px;border-radius:var(--radius-sm);
   border:1.5px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:15px;padding:0 14px;
   transition:border-color var(--transition),box-shadow var(--transition)}
-.dt-row input[type=date]:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,115,232,.15);outline:none}
+.dt-container input[type=date]:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,115,232,.15);outline:none}
+
+.time-picker-12{display:flex;align-items:center;gap:6px;background:var(--card);border:1.5px solid var(--line);
+  border-radius:var(--radius-sm);padding:4px 10px;min-height:48px;transition:border-color var(--transition)}
+.time-picker-12:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,115,232,.15)}
+.time-picker-12 select{border:none;background:transparent;font:inherit;font-size:16px;font-weight:700;
+  color:var(--ink);cursor:pointer;padding:6px 8px;border-radius:8px;outline:none}
+.time-picker-12 select:focus{background:var(--blue-soft);color:var(--blue)}
+.time-colon{font-size:18px;font-weight:800;color:var(--muted);user-select:none;margin:0 -2px}
+.ampm-toggle{display:flex;gap:3px;margin-left:auto;background:var(--bg);border-radius:8px;padding:3px}
+.ampm-chip{font:inherit;font-size:12px;font-weight:800;padding:6px 12px;border-radius:6px;
+  color:var(--muted);transition:all var(--transition);cursor:pointer}
+.ampm-chip.active{background:var(--blue);color:#fff;box-shadow:0 1px 4px rgba(26,115,232,.3)}
+
+/* ============ LOBBY ACTION BAR (Image 1: Chat + Vote Open) ============ */
+.lobby-action-bar{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.lob-btn{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius-full);
+  min-height:46px;padding:8px 16px;font-size:13.5px;font-weight:700;color:var(--ink);
+  display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:var(--shadow);transition:all var(--transition)}
+.lob-btn:hover{background:var(--blue-soft);border-color:var(--blue);transform:translateY(-1px)}
+.lob-btn:active{transform:scale(.97)}
+.lob-btn svg{flex:none}
+
+/* ============ VOTE MODERATION OVERLAY ============ */
+.vote-status-banner{display:flex;align-items:center;gap:8px;padding:12px 14px;border-radius:var(--radius-sm);
+  background:var(--green-soft);color:var(--green);font-size:13px;font-weight:700;margin-top:12px}
+.vote-status-banner.locked{background:var(--red-soft);color:var(--red)}
+.vote-card{display:flex;align-items:center;gap:12px;padding:12px;border:1.5px solid var(--line);
+  border-radius:var(--radius-sm);background:var(--card);margin-top:10px}
+.vote-card .av{width:42px;height:42px;flex:none}
+.vote-card-info{flex:1;min-width:0}
+.vote-card-info b{font-size:14.5px;display:block}
+.vote-card-info small{color:var(--muted);font-size:12px}
+.btn-vote{padding:8px 14px;border-radius:var(--radius-full);font-size:12px;font-weight:700;
+  border:1.5px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;transition:all var(--transition)}
+.btn-vote:hover{background:var(--red-soft);border-color:var(--red);color:var(--red)}
+.btn-vote.voted{background:var(--red);color:#fff;border-color:var(--red)}
+.btn-vote:disabled{opacity:.5;cursor:not-allowed}
+.tab-ic{font-size:17px;line-height:1}
+
 </style>
 </head>
 <body>
 <div class="app">
+
+<!-- ==================== TOP NAVIGATION (Image 2) ==================== -->
+<div class="top-nav-wrap">
+  <nav class="top-nav" aria-label="Screen Navigation">
+    <button type="button" class="nav-tab active" id="navLogin" data-target="s-login">Login</button>
+    <button type="button" class="nav-tab" id="navHome" data-target="s-home">Search</button>
+    <button type="button" class="nav-tab" id="navLobby" data-target="s-lobby">Lobby</button>
+  </nav>
+</div>
 
 <!-- ==================== 1. LOGIN SCREEN ==================== -->
 <section class="screen on" id="s-login">
@@ -322,10 +386,10 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
   <div class="card" style="margin-top:12px">
     <div class="dir-tabs">
       <button class="dir-tab active" id="dirOut" data-dir="out">
-        <span class="arrow">→</span> CIT → City
+        <span class="tab-ic">🏛️</span> From Campus
       </button>
       <button class="dir-tab" id="dirIn" data-dir="in">
-        City → CIT <span class="arrow">←</span>
+        <span class="tab-ic">🚕</span> To Campus
       </button>
     </div>
 
@@ -339,15 +403,36 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
       <span class="dot"></span>
     </div>
 
-    <label class="l" style="margin-top:0" for="dest" id="destLabel">Destination</label>
+    <label class="l" style="margin-top:0" for="dest" id="destLabel">Drop-off Terminal (from CIT)</label>
     <select id="dest">
-      <option>Tambaram</option><option>Egmore</option><option>Kilambakkam</option><option>Sriperumbudur</option>
+      <option value="Tambaram">Tambaram</option>
+      <option value="Egmore">Egmore</option>
+      <option value="Kilambakkam">Kilambakkam</option>
+      <option value="Sriperumbudur">Sriperumbudur</option>
     </select>
 
-    <label class="l" for="tripDate" id="timeLabel">Leaving campus on</label>
-    <div class="dt-row">
+    <label class="l" for="tripDate" id="timeLabel">Leaving campus at</label>
+    <div class="dt-container">
       <input type="date" id="tripDate">
-      <input type="time" id="time" value="16:00">
+      <div class="time-picker-12">
+        <select id="timeHour" aria-label="Hour">
+          <option value="1">01</option><option value="2">02</option><option value="3">03</option>
+          <option value="4" selected>04</option><option value="5">05</option><option value="6">06</option>
+          <option value="7">07</option><option value="8">08</option><option value="9">09</option>
+          <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+        </select>
+        <span class="time-colon">:</span>
+        <select id="timeMin" aria-label="Minute">
+          <option value="00" selected>00</option>
+          <option value="15">15</option>
+          <option value="30">30</option>
+          <option value="45">45</option>
+        </select>
+        <div class="ampm-toggle">
+          <button type="button" class="ampm-chip" id="btnAM">AM</button>
+          <button type="button" class="ampm-chip active" id="btnPM">PM</button>
+        </div>
+      </div>
     </div>
 
     <div class="steps">
@@ -403,6 +488,20 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
       <span id="capTxt">5/7 Luggage Points Filled</span>
       <span id="capLeft" class="muted"></span>
     </div>
+
+    <!-- Image 1: Chat + Vote Open Buttons -->
+    <div class="lobby-action-bar">
+      <button type="button" class="lob-btn" id="openChatBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1A73E8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+        </svg>
+        <span>Chat</span>
+      </button>
+      <button type="button" class="lob-btn" id="openVoteBtn">
+        <span class="lock-svg">🔓</span>
+        <span id="voteBtnTxt">Vote Open (&gt;45m)</span>
+      </button>
+    </div>
   </div>
 
   <div class="grid" id="grid"></div>
@@ -420,6 +519,22 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
 
 <!-- TOAST -->
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- ==================== VOTE OUT MODERATION OVERLAY ==================== -->
+<div class="ov" id="voteOv">
+  <div class="sheet" role="dialog" aria-label="Ride moderation and vote out">
+    <div class="top"><h2>Ride Moderation</h2><button class="x" data-close aria-label="Close">✕</button></div>
+    <div class="vote-status-banner" id="voteLockBanner">
+      <span id="voteLockIcon">🔓</span>
+      <span id="voteLockText">Voting Open (Locked &lt;45m before departure)</span>
+    </div>
+    <p class="muted" style="margin-top:8px;font-size:13px">
+      Require majority vote (2 votes in 4-person cab) to remove a passenger. Luggage points are immediately released upon removal.
+    </p>
+
+    <div class="vote-list" id="voteList" style="margin-top:14px"></div>
+  </div>
+</div>
 
 <!-- ==================== CHAT + QR OVERLAY ==================== -->
 <div class="ov" id="chatOv">
@@ -497,7 +612,7 @@ const CARS = [{ n: "Auto", max: 4 }, { n: "Prime Sedan", max: 7 }, { n: "XL", ma
 const COLORS = ["#1A73E8", "#EA4335", "#FBBC04", "#34A853"];
 const $ = id => document.getElementById(id);
 const CITIES = ["Tambaram", "Egmore", "Kilambakkam", "Sriperumbudur"];
-const state = { user: null, t: 0, b: 1, verified: false, lobby: null, joined: false, dir: "out" };
+const state = { user: null, t: 0, b: 1, verified: false, lobby: null, joined: false, dir: "out", ampm: "PM" };
 
 /* ============ DIRECTION LOGIC ============ */
 function setDirection(dir) {
@@ -507,12 +622,12 @@ function setDirection(dir) {
 
   const dest = $("dest").value;
   if (dir === "out") {
-    $("destLabel").textContent = "Destination Hub (from CIT)";
+    $("destLabel").textContent = "Drop-off Terminal (from CIT)";
     $("timeLabel").textContent = "Leaving campus at";
     $("routeFrom").textContent = "CIT Campus";
     $("routeTo").textContent = dest;
   } else {
-    $("destLabel").textContent = "Pickup Hub (to CIT)";
+    $("destLabel").textContent = "Pickup Terminal (to CIT)";
     $("timeLabel").textContent = "Arrive on there at (CIT Campus)";
     $("routeFrom").textContent = dest;
     $("routeTo").textContent = "CIT Campus";
@@ -520,6 +635,25 @@ function setDirection(dir) {
 }
 $("dirOut").onclick = () => setDirection("out");
 $("dirIn").onclick = () => setDirection("in");
+
+/* AM / PM Toggle Controls */
+$("btnAM").onclick = () => {
+  state.ampm = "AM";
+  $("btnAM").classList.add("active");
+  $("btnPM").classList.remove("active");
+};
+$("btnPM").onclick = () => {
+  state.ampm = "PM";
+  $("btnPM").classList.add("active");
+  $("btnAM").classList.remove("active");
+};
+
+function getSelectedTime() {
+  const h = $("timeHour").value || "4";
+  const m = $("timeMin").value || "00";
+  const ampm = state.ampm || "PM";
+  return `${parseInt(h, 10)}:${m} ${ampm}`;
+}
 
 /* Set today's date as default & prevent past date selection */
 (function setDefaultDate() {
@@ -545,8 +679,32 @@ function toast(msg) {
 function show(id) {
   document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === id));
   $("payBar").classList.toggle("on", id === "s-lobby");
+
+  $("navLogin").classList.toggle("active", id === "s-login");
+  $("navHome").classList.toggle("active", id === "s-home");
+  $("navLobby").classList.toggle("active", id === "s-lobby");
+
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
+
+$("navLogin").onclick = () => show("s-login");
+$("navHome").onclick = () => {
+  if (!state.user) {
+    state.user = parseEmail("aadhavank.cse2025@citchennai.net");
+    $("meAv").outerHTML = avatar(state.user.name, 0, 44).replace('class="av"', 'class="av" id="meAv"');
+    $("meName").textContent = state.user.name;
+    $("meInfo").textContent = `${state.user.dept} · ${ordinal(state.user.yr)} Year (Batch ${state.user.batch})`;
+  }
+  show("s-home");
+};
+$("navLobby").onclick = () => {
+  if (!state.lobby) {
+    if (!state.user) state.user = parseEmail("aadhavank.cse2025@citchennai.net");
+    $("find").click();
+  } else {
+    show("s-lobby");
+  }
+};
 
 function ordinal(n) { return n === 1 ? "1st" : n === 2 ? "2nd" : n === 3 ? "3rd" : n + "th"; }
 
@@ -697,8 +855,9 @@ function render() {
   const pct = used / L.car.max * 100;
 
   const isOut = L.dir === "out";
+  const displayTime = (L.time && (L.time.includes("AM") || L.time.includes("PM"))) ? L.time : fmtTime(L.time);
   $("lobRoute").textContent = isOut ? `CIT Campus → ${L.dest}` : `${L.dest} → CIT Campus`;
-  $("lobTitle").textContent = isOut ? `Leaving at ${fmtTime(L.time)}` : `Arrive on there at ${fmtTime(L.time)}`;
+  $("lobTitle").textContent = isOut ? `Leaving at ${displayTime}` : `Arrive on there at ${displayTime}`;
   $("lobDate").textContent = fmtDate(L.date);
   $("lobCar").textContent = `${L.car.n} (${L.car.max} pt max)`;
   $("lobFem").classList.toggle("hide", !L.fem);
@@ -741,17 +900,18 @@ $("find").onclick = () => {
   const pts = myPts();
   if (pts < 1) { $("homeErr").textContent = "Add at least one bag."; return; }
   $("homeErr").textContent = "";
-  const u = state.user, fem = $("fem").checked;
+  const u = state.user || parseEmail("aadhavank.cse2025@citchennai.net"), fem = $("fem").checked;
+  const timeStr = getSelectedTime();
   const L = {
     dest: $("dest").value, dir: state.dir, date: $("tripDate").value,
-    time: $("time").value || "16:00", fem,
+    time: timeStr, fem,
     car: CARS[1],
     pax: [
-      { name: "Nisha", dept: "CSE", yr: 3, pts: 2 },
-      { name: "Kavin", dept: "IT", yr: 1, pts: 1 }
+      { name: "Nisha", dept: "CSE", yr: 3, pts: 2, votes: 0, hasMyVote: false },
+      { name: "Kavin", dept: "IT", yr: 1, pts: 1, votes: 0, hasMyVote: false }
     ]
   };
-  try { joinTransaction(L, { name: u.name, dept: u.dept, yr: u.yr, pts, me: true }); }
+  try { joinTransaction(L, { name: u.name, dept: u.dept, yr: u.yr, pts, me: true, votes: 0 }); }
   catch (e) { $("homeErr").textContent = e.message; return; }
 
   state.lobby = L;
@@ -763,7 +923,7 @@ $("find").onclick = () => {
   state.sim = setTimeout(() => {
     if (!state.lobby) return;
     try {
-      joinTransaction(state.lobby, { name: "Divya", dept: "ECE", yr: 2, pts: 1, isNew: true });
+      joinTransaction(state.lobby, { name: "Divya", dept: "ECE", yr: 2, pts: 1, isNew: true, votes: 0 });
       render();
       toast("Divya just joined the ride");
     } catch (e) {
@@ -773,6 +933,72 @@ $("find").onclick = () => {
 };
 
 $("back").onclick = () => { clearTimeout(state.sim); state.lobby = null; show("s-home"); };
+
+/* ============ VOTE OUT MODERATION ============ */
+function renderVoteList() {
+  const L = state.lobby;
+  if (!L) return;
+  const listEl = $("voteList");
+  const otherPax = L.pax.filter(p => !p.me);
+
+  if (!otherPax.length) {
+    listEl.innerHTML = `<p class="muted" style="text-align:center;padding:24px 0">No other passengers in this lobby.</p>`;
+    return;
+  }
+
+  let html = "";
+  otherPax.forEach(p => {
+    const votes = p.votes || 0;
+    const votedClass = p.hasMyVote ? "voted" : "";
+    const btnText = p.hasMyVote ? "Voted (Cancel)" : "Vote Out";
+    html += `
+      <div class="vote-card">
+        ${avatar(p.name, 1, 42)}
+        <div class="vote-card-info">
+          <b>${p.name}</b>
+          <small>${p.dept} · ${ordinal(p.yr)} Year · 🧳 ${p.pts} pt${p.pts > 1 ? "s" : ""}</small>
+          <div style="margin-top:4px"><span class="pill y">${votes}/2 votes to remove</span></div>
+        </div>
+        <button type="button" class="btn-vote ${votedClass}" data-name="${p.name}">${btnText}</button>
+      </div>
+    `;
+  });
+  listEl.innerHTML = html;
+
+  listEl.querySelectorAll(".btn-vote").forEach(btn => {
+    btn.onclick = () => {
+      const name = btn.dataset.name;
+      const target = L.pax.find(p => p.name === name);
+      if (!target) return;
+
+      target.hasMyVote = !target.hasMyVote;
+      target.votes = (target.votes || 0) + (target.hasMyVote ? 1 : -1);
+
+      if (target.votes >= 2) {
+        L.pax = L.pax.filter(p => p.name !== name);
+        render();
+        toast(`${name} was voted out. Luggage capacity freed.`);
+        renderVoteList();
+      } else {
+        renderVoteList();
+      }
+    };
+  });
+}
+
+$("openChatBtn").onclick = () => {
+  $("chatOv").classList.add("on");
+  if (!chatEl.children.length) {
+    addMsg("Nisha", "Hi all! I'll book the cab and pin my GPay QR here.");
+    addMsg("Kavin", "Nice, meet at main gate?");
+  }
+  render();
+};
+
+$("openVoteBtn").onclick = () => {
+  renderVoteList();
+  $("voteOv").classList.add("on");
+};
 
 /* ============ CHAT + QR ============ */
 const chatEl = $("chat");
