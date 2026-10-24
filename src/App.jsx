@@ -47,6 +47,88 @@ function parseEmail(email) {
   };
 }
 
+const getInitialDemoRides = (todayStr) => [
+  {
+    id: "ride-demo-1",
+    rideId: "ride-demo-1",
+    leaderName: "Prathik R",
+    destination: "Tambaram",
+    direction: "out",
+    departureDate: todayStr,
+    departureTime: "4:30 PM",
+    vehicleType: "Prime Sedan",
+    maxLuggageUnits: 7,
+    currentLuggageUnits: 3,
+    maxPassengers: 4,
+    currentPassengers: 2,
+    status: "OPEN",
+    isFemaleOnly: false,
+    pax: [
+      { name: "Prathik R", dept: "ECE", yr: 3, pts: 2, votes: 0, hasMyVote: false },
+      { name: "Dinesh K", dept: "IT", yr: 2, pts: 1, votes: 0, hasMyVote: false }
+    ]
+  },
+  {
+    id: "ride-demo-2",
+    rideId: "ride-demo-2",
+    leaderName: "Nisha S",
+    destination: "Kilambakkam",
+    direction: "out",
+    departureDate: todayStr,
+    departureTime: "5:15 PM",
+    vehicleType: "Auto",
+    maxLuggageUnits: 4,
+    currentLuggageUnits: 2,
+    maxPassengers: 3,
+    currentPassengers: 1,
+    status: "OPEN",
+    isFemaleOnly: true,
+    pax: [
+      { name: "Nisha S", dept: "CSE", yr: 4, pts: 2, votes: 0, hasMyVote: false }
+    ]
+  },
+  {
+    id: "ride-demo-3",
+    rideId: "ride-demo-3",
+    leaderName: "Sanjay V",
+    destination: "Egmore",
+    direction: "in",
+    departureDate: todayStr,
+    departureTime: "6:00 PM",
+    vehicleType: "Prime Sedan",
+    maxLuggageUnits: 7,
+    currentLuggageUnits: 4,
+    maxPassengers: 4,
+    currentPassengers: 2,
+    status: "OPEN",
+    isFemaleOnly: false,
+    pax: [
+      { name: "Sanjay V", dept: "MECH", yr: 3, pts: 2, votes: 0, hasMyVote: false },
+      { name: "Harish M", dept: "AIDS", yr: 1, pts: 2, votes: 0, hasMyVote: false }
+    ]
+  },
+  {
+    id: "ride-demo-4",
+    rideId: "ride-demo-4",
+    leaderName: "Kavya P",
+    destination: "Sriperumbudur",
+    direction: "out",
+    departureDate: todayStr,
+    departureTime: "7:00 PM",
+    vehicleType: "XL",
+    maxLuggageUnits: 10,
+    currentLuggageUnits: 4,
+    maxPassengers: 6,
+    currentPassengers: 2,
+    status: "OPEN",
+    isFemaleOnly: true,
+    pax: [
+      { name: "Kavya P", dept: "ECE", yr: 2, pts: 2, votes: 0, hasMyVote: false },
+      { name: "Rithika N", dept: "CSE", yr: 2, pts: 2, votes: 0, hasMyVote: false }
+    ]
+  }
+];
+
 export default function App() {
   const [activeTab, setActiveTab] = useState("login");
   const [user, setUser] = useState(null);
@@ -71,8 +153,9 @@ export default function App() {
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState("");
 
-  // Lobby State
+  // Lobby & Travel Options State
   const [lobby, setLobby] = useState(null);
+  const [allRides, setAllRides] = useState(() => getInitialDemoRides(todayStr));
   const [messages, setMessages] = useState([]);
   const [qrCodeUrl, setQrCodeUrl] = useState("");
 
@@ -106,6 +189,30 @@ export default function App() {
     });
     return () => unsubscribe();
   }, []);
+
+  // Real-time Firestore sync for all other students' rides
+  useEffect(() => {
+    try {
+      const ridesRef = collection(db, "rides");
+      const q = query(ridesRef, where("status", "==", "OPEN"));
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        if (!snapshot.empty) {
+          const liveList = [];
+          snapshot.forEach(docSnap => {
+            liveList.push({ id: docSnap.id, ...docSnap.data() });
+          });
+          setAllRides(liveList);
+        } else {
+          setAllRides(getInitialDemoRides(todayStr));
+        }
+      }, (err) => {
+        console.warn("Firestore rides stream notice:", err);
+      });
+      return () => unsubscribe();
+    } catch (_) {
+      setAllRides(getInitialDemoRides(todayStr));
+    }
+  }, [todayStr]);
 
   // Google Sign-In via Firebase Auth Popup
   const handleGoogleSignIn = async () => {
@@ -170,7 +277,123 @@ export default function App() {
     showToast("Signed out successfully");
   };
 
-  // Find or Create Matching Cab Lobby
+  // Join a specific travel option directly from the Lobby list
+  const handleJoinSpecificRide = async (targetRide) => {
+    if (!user) {
+      showToast("Please sign in with your @citchennai.net account first");
+      setActiveTab("login");
+      return;
+    }
+
+    const myPts = searchState.trolley * 2 + searchState.backpack;
+    const currentLug = targetRide.currentLuggageUnits || (targetRide.pax || []).reduce((s, p) => s + (p.pts || 0), 0) || 0;
+    const maxLug = targetRide.maxLuggageUnits || 7;
+    const currentPax = targetRide.currentPassengers || (targetRide.pax || []).length || 1;
+    const maxPax = targetRide.maxPassengers || 4;
+
+    if (currentLug + myPts > maxLug) {
+      showToast(`Luggage exceeded! Only ${maxLug - currentLug} pts remaining in vehicle.`);
+      return;
+    }
+
+    if (currentPax + 1 > maxPax) {
+      showToast("This cab pool is already full!");
+      return;
+    }
+
+    const myPax = {
+      uid: user.uid || `cit-${Date.now()}`,
+      name: user.name,
+      dept: user.dept,
+      yr: user.yr,
+      pts: myPts,
+      me: true,
+      votes: 0,
+      hasMyVote: false
+    };
+
+    const rideId = targetRide.id || targetRide.rideId;
+    const isOut = (targetRide.direction || targetRide.dir) === "out";
+    const dest = targetRide.destination || targetRide.dest;
+
+    try {
+      const rideRef = doc(db, "rides", rideId);
+      await runTransaction(db, async (txn) => {
+        const snap = await txn.get(rideRef);
+        if (snap.exists()) {
+          const rData = snap.data();
+          const curL = rData.currentLuggageUnits || 0;
+          const curP = rData.currentPassengers || 0;
+          const maxL = rData.maxLuggageUnits || 7;
+          const maxP = rData.maxPassengers || 4;
+          if (curL + myPts > maxL) throw new Error("Luggage overflow");
+          if (curP + 1 > maxP) throw new Error("Cab full");
+          const newPaxList = [...(rData.pax || []), myPax];
+          txn.update(rideRef, {
+            pax: newPaxList,
+            currentLuggageUnits: curL + myPts,
+            currentPassengers: curP + 1,
+            status: (curP + 1 >= maxP || curL + myPts >= maxL) ? "FULL" : "OPEN",
+            updatedAt: serverTimestamp()
+          });
+        }
+      });
+
+      // Subscribe to live ride updates
+      onSnapshot(doc(db, "rides", rideId), (snap) => {
+        if (snap.exists()) {
+          const rData = snap.data();
+          setLobby({
+            dest: rData.destination,
+            dir: rData.direction,
+            date: rData.departureDate,
+            time: rData.departureTime,
+            fem: rData.isFemaleOnly,
+            car: { n: rData.vehicleType || "Prime Sedan", max: rData.maxLuggageUnits || 7 },
+            rideId,
+            pax: (rData.pax || []).map(p => ({
+              ...p,
+              me: p.uid === user.uid || p.name === user.name
+            }))
+          });
+        }
+      });
+
+      // Subscribe to chat
+      const msgsRef = collection(db, "rides", rideId, "messages");
+      const msgsQ = query(msgsRef, orderBy("createdAt", "asc"));
+      onSnapshot(msgsQ, (snap) => {
+        const loaded = [];
+        snap.forEach(d => {
+          const m = d.data();
+          loaded.push({
+            ...m,
+            me: m.senderUid === user.uid || m.senderName === user.name
+          });
+        });
+        setMessages(loaded);
+      });
+    } catch (err) {
+      console.warn("Local fallback join for specific ride:", err);
+    }
+
+    // Set active lobby locally
+    setLobby({
+      dest,
+      dir: isOut ? "out" : "in",
+      date: targetRide.departureDate || targetRide.date || todayStr,
+      time: targetRide.departureTime || targetRide.time || "4:30 PM",
+      fem: targetRide.isFemaleOnly || targetRide.fem || false,
+      car: { n: targetRide.vehicleType || "Prime Sedan", max: maxLug },
+      rideId,
+      pax: [...(targetRide.pax || []), myPax]
+    });
+
+    showToast(`Joined ${dest} cab pool ✓`);
+    setActiveTab("lobby");
+  };
+
+  // Find or Create Matching Cab Lobby from Search Form
   const handleFindRides = async () => {
     if (!user) {
       showToast("Please sign in with your @citchennai.net account first");
@@ -199,7 +422,6 @@ export default function App() {
     };
 
     try {
-      // 1. Search Open Rides in Cloud Firestore
       const ridesRef = collection(db, "rides");
       const q = query(
         ridesRef,
@@ -309,7 +531,6 @@ export default function App() {
       setActiveTab("lobby");
     } catch (err) {
       console.warn("Firestore lobby error, using local simulation:", err);
-      // Fallback local simulation
       setLobby({
         dest: searchState.dest,
         dir: searchState.dir,
@@ -345,7 +566,6 @@ export default function App() {
         console.warn("Message send error:", err);
       }
     }
-    // Local fallback
     setMessages(prev => [...prev, { senderName: user.name, text, me: true }]);
   };
 
@@ -360,7 +580,7 @@ export default function App() {
           return { ...p, votes, hasMyVote: newVote };
         }
         return p;
-      }).filter(p => (p.votes || 0) < 2); // 2-vote majority threshold
+      }).filter(p => (p.votes || 0) < 2);
       return { ...prev, pax: updatedPax };
     });
     showToast("Vote recorded (Majority = 2 votes to remove)");
@@ -408,9 +628,11 @@ export default function App() {
             onOpenVote={() => setVoteOpen(true)}
             onLeaveLobby={() => {
               setLobby(null);
-              setActiveTab("search");
               showToast("Left cab pool");
             }}
+            allRides={allRides}
+            onJoinRide={handleJoinSpecificRide}
+            myLuggagePts={searchState.trolley * 2 + searchState.backpack}
           />
         )}
       </main>

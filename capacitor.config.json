@@ -1,0 +1,13 @@
+{
+  "appId": "com.cabsync.cit",
+  "appName": "CabSync CIT",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https",
+    "url": "https://cabsync-cit.web.app",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

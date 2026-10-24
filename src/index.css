@@ -799,3 +799,73 @@ input:checked + .slider::before {
 .bottom-pay-bar:active {
   transform: translateX(-50%) scale(0.98);
 }
+
+/* ==================== STUDENT TRAVEL OPTIONS CARDS ==================== */
+.ride-option-card {
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-top: 12px;
+  transition: all 0.25s var(--spring);
+  text-align: left;
+}
+.ride-option-card:hover {
+  border-color: var(--blue);
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+.ride-option-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.ride-filter-chips {
+  display: flex;
+  gap: 6px;
+  margin: 10px 0 14px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+.ride-filter-chip {
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 12.5px;
+  font-weight: 700;
+  border: 1px solid var(--line);
+  background: var(--track);
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+.ride-filter-chip.active {
+  background: var(--blue);
+  color: #FFFFFF;
+  border-color: var(--blue);
+  box-shadow: 0 1px 4px rgba(26, 115, 232, 0.25);
+}
+.rider-avatar-stack {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+}
+.rider-avatar-mini {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid #FFFFFF;
+  background: var(--blue-soft);
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -6px;
+}
+.rider-avatar-mini:first-child {
+  margin-left: 0;
+}
+

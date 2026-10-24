@@ -1,5 +1,5 @@
 // Developed by aknex
-import React from "react";
+import React, { useState } from "react";
 
 const COLORS = ["#1A73E8", "#EA4335", "#FBBC04", "#34A853"];
 
@@ -23,118 +23,247 @@ export default function LobbySection({
   lobby,
   onOpenChat,
   onOpenVote,
-  onLeaveLobby
+  onLeaveLobby,
+  allRides = [],
+  onJoinRide,
+  myLuggagePts = 1
 }) {
-  if (!lobby) {
-    return (
-      <section id="sec-lobby" className="section-card" style={{ textAlign: "center", padding: "40px 20px" }}>
-        <div style={{ fontSize: 40, marginBottom: 10 }}>🚕</div>
-        <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 6 }}>No Active Ride Lobby</h3>
-        <p style={{ color: "var(--muted)", fontSize: 14 }}>
-          Search for a destination and matching luggage capacity to join or create a cab pool.
-        </p>
-      </section>
-    );
-  }
+  const [filter, setFilter] = useState("all");
 
-  const { dest, dir, date, time, fem, pax = [], car = { n: "Prime Sedan", max: 7 } } = lobby;
-  const isOut = dir === "out";
-  const usedPts = pax.reduce((sum, p) => sum + (p.pts || 0), 0);
-  const maxPts = car.max || 7;
-  const pct = Math.min(100, Math.round((usedPts / maxPts) * 100));
-
-  const barColor = pct >= 100 ? "var(--red)" : pct >= 80 ? "var(--yellow)" : "var(--blue)";
+  // Filter rides based on direction
+  const filteredRides = allRides.filter(r => {
+    if (filter === "out") return r.direction === "out" || r.dir === "out";
+    if (filter === "in") return r.direction === "in" || r.dir === "in";
+    return true;
+  });
 
   return (
-    <section id="sec-lobby" className="section-card">
-      <div className="lobby-header-bar">
-        <div>
-          <span style={{ fontSize: 12, fontWeight: 700, color: "var(--blue)", textTransform: "uppercase" }}>
-            {fem ? "🌸 Female-Only Pool" : "Cab Pool"}
-          </span>
-          <h2 style={{ fontSize: 18, fontWeight: 800 }}>
-            {isOut ? `CIT Campus → ${dest}` : `${dest} → CIT Campus`}
-          </h2>
-        </div>
-        <span style={{ background: "var(--green-soft)", color: "var(--green)", fontWeight: 700, fontSize: 12, padding: "4px 10px", borderRadius: "9999px" }}>
-          Active
-        </span>
-      </div>
+    <section id="sec-lobby">
+      {/* 1. YOUR ACTIVE CAB POOL (if user has joined one) */}
+      {lobby && (
+        <div className="section-card">
+          <div className="lobby-header-bar">
+            <div>
+              <span style={{ fontSize: 12, fontWeight: 700, color: "var(--blue)", textTransform: "uppercase" }}>
+                {lobby.fem ? "🌸 Female-Only Pool" : "Your Active Cab Pool"}
+              </span>
+              <h2 style={{ fontSize: 18, fontWeight: 800 }}>
+                {lobby.dir === "out" ? `CIT Campus → ${lobby.dest}` : `${lobby.dest} → CIT Campus`}
+              </h2>
+            </div>
+            <span style={{ background: "var(--green-soft)", color: "var(--green)", fontWeight: 700, fontSize: 12, padding: "4px 10px", borderRadius: "9999px" }}>
+              Active
+            </span>
+          </div>
 
-      <div style={{ display: "flex", gap: 12, fontSize: 13, color: "var(--muted)", marginBottom: 12 }}>
-        <span>🗓️ {date || "Today"}</span>
-        <span>⏰ {isOut ? `Leaving ${time}` : `Arriving ${time}`}</span>
-      </div>
+          <div style={{ display: "flex", gap: 12, fontSize: 13, color: "var(--muted)", marginBottom: 12 }}>
+            <span>🗓️ {lobby.date || "Today"}</span>
+            <span>⏰ {lobby.dir === "out" ? `Leaving ${lobby.time}` : `Arriving ${lobby.time}`}</span>
+          </div>
 
-      {/* Capacity Progress Bar */}
-      <div>
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, fontWeight: 600 }}>
-          <span>{usedPts}/{maxPts} Luggage Points Filled</span>
-          <span style={{ color: barColor }}>{maxPts - usedPts <= 0 ? "Cab Full" : `${maxPts - usedPts} pts left`}</span>
-        </div>
-        <div className="capacity-track">
-          <div 
-            className="capacity-fill" 
-            style={{ width: `${pct}%`, background: barColor }} 
-          />
-        </div>
-      </div>
-
-      {/* 4-Passenger Grid */}
-      <div className="pax-grid">
-        {[0, 1, 2, 3].map((slotIdx) => {
-          const p = pax[slotIdx];
-          if (p) {
+          {/* Capacity Progress Bar */}
+          {(() => {
+            const usedPts = (lobby.pax || []).reduce((sum, p) => sum + (p.pts || 0), 0);
+            const maxPts = lobby.car?.max || 7;
+            const pct = Math.min(100, Math.round((usedPts / maxPts) * 100));
+            const barColor = pct >= 100 ? "var(--red)" : pct >= 80 ? "var(--yellow)" : "var(--blue)";
             return (
-              <div key={p.uid || p.name || slotIdx} className="pax-card">
-                <UserAvatar name={p.name} index={slotIdx} />
-                <b style={{ fontSize: 14.5, display: "block" }}>{p.name}{p.me ? " (You)" : ""}</b>
-                <small style={{ color: "var(--muted)", fontSize: 12 }}>{p.dept} · {p.yr ? `${p.yr} Year` : "Student"}</small>
-                <div style={{ marginTop: 6 }}>
-                  <span style={{ background: "var(--blue-soft)", color: "var(--blue)", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: "9999px" }}>
-                    {p.pts} {p.pts === 1 ? "pt" : "pts"}
-                  </span>
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, fontWeight: 600 }}>
+                  <span>{usedPts}/{maxPts} Luggage Points Filled</span>
+                  <span style={{ color: barColor }}>{maxPts - usedPts <= 0 ? "Cab Full" : `${maxPts - usedPts} pts left`}</span>
+                </div>
+                <div className="capacity-track">
+                  <div className="capacity-fill" style={{ width: `${pct}%`, background: barColor }} />
                 </div>
               </div>
             );
-          }
-          return (
-            <div key={`empty-${slotIdx}`} className="pax-card empty">
-              <span style={{ fontSize: 26, color: "var(--line)", marginBottom: 4 }}>+</span>
-              <span style={{ fontSize: 12 }}>Waiting for rider</span>
-            </div>
-          );
-        })}
+          })()}
+
+          {/* 4-Passenger Grid */}
+          <div className="pax-grid">
+            {[0, 1, 2, 3].map((slotIdx) => {
+              const p = (lobby.pax || [])[slotIdx];
+              if (p) {
+                return (
+                  <div key={p.uid || p.name || slotIdx} className="pax-card">
+                    <UserAvatar name={p.name} index={slotIdx} />
+                    <b style={{ fontSize: 14.5, display: "block" }}>{p.name}{p.me ? " (You)" : ""}</b>
+                    <small style={{ color: "var(--muted)", fontSize: 12 }}>{p.dept} · {p.yr ? `${p.yr} Year` : "Student"}</small>
+                    <div style={{ marginTop: 6 }}>
+                      <span style={{ background: "var(--blue-soft)", color: "var(--blue)", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: "9999px" }}>
+                        {p.pts} {p.pts === 1 ? "pt" : "pts"}
+                      </span>
+                    </div>
+                  </div>
+                );
+              }
+              return (
+                <div key={`empty-${slotIdx}`} className="pax-card empty">
+                  <span style={{ fontSize: 26, color: "var(--line)", marginBottom: 4 }}>+</span>
+                  <span style={{ fontSize: 12 }}>Waiting for rider</span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Action Bar */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 18 }}>
+            <button 
+              type="button" 
+              className="btn-google"
+              style={{ minHeight: 46, fontSize: 13.5 }}
+              onClick={onOpenChat}
+            >
+              <span>💬</span> Chat &amp; QR
+            </button>
+
+            <button 
+              type="button" 
+              className="btn-google"
+              style={{ minHeight: 46, fontSize: 13.5 }}
+              onClick={onOpenVote}
+            >
+              <span>⚖️</span> Vote Out
+            </button>
+          </div>
+
+          <button 
+            type="button"
+            style={{ width: "100%", marginTop: 12, padding: "8px", color: "var(--muted)", background: "none", border: "none", fontSize: 12.5, cursor: "pointer", textDecoration: "underline" }}
+            onClick={onLeaveLobby}
+          >
+            Leave this cab pool
+          </button>
+        </div>
+      )}
+
+      {/* 2. ALL CURRENT OTHERS' TRAVEL OPTIONS */}
+      <div className="section-card" style={{ marginTop: lobby ? 16 : 0 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div>
+            <h2 style={{ fontSize: 19, fontWeight: 800 }}>
+              {lobby ? "Other Students' Travel Options" : "Current Student Travel Options"}
+            </h2>
+            <p style={{ color: "var(--muted)", fontSize: 13, marginTop: 2 }}>
+              {filteredRides.length} active cab {filteredRides.length === 1 ? "pool" : "pools"} organized by CIT students
+            </p>
+          </div>
+          <span style={{ fontSize: 22 }}>🚕</span>
+        </div>
+
+        {/* Direction Filter Chips */}
+        <div className="ride-filter-chips">
+          <button 
+            type="button" 
+            className={`ride-filter-chip ${filter === "all" ? "active" : ""}`}
+            onClick={() => setFilter("all")}
+          >
+            All Rides ({allRides.length})
+          </button>
+          <button 
+            type="button" 
+            className={`ride-filter-chip ${filter === "out" ? "active" : ""}`}
+            onClick={() => setFilter("out")}
+          >
+            🏛️ From Campus
+          </button>
+          <button 
+            type="button" 
+            className={`ride-filter-chip ${filter === "in" ? "active" : ""}`}
+            onClick={() => setFilter("in")}
+          >
+            🚕 To Campus
+          </button>
+        </div>
+
+        {/* List of Travel Options */}
+        {filteredRides.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "28px 14px", color: "var(--muted)", fontSize: 14 }}>
+            <p>No active student rides match this filter right now.</p>
+            <p style={{ fontSize: 12.5, marginTop: 4 }}>Use Search to create the first cab pool for this route!</p>
+          </div>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {filteredRides.map((ride) => {
+              const isCurrentLobby = lobby && (lobby.rideId === ride.id || lobby.rideId === ride.rideId);
+              const isOut = (ride.direction || ride.dir) === "out";
+              const dest = ride.destination || ride.dest || "Tambaram";
+              const paxList = ride.pax || [];
+              const paxCount = ride.currentPassengers || paxList.length || 1;
+              const maxPassengers = ride.maxPassengers || 4;
+              const currentLuggage = ride.currentLuggageUnits || paxList.reduce((s, p) => s + (p.pts || 0), 0) || 0;
+              const maxLuggage = ride.maxLuggageUnits || 7;
+              const isFull = paxCount >= maxPassengers || currentLuggage + myLuggagePts > maxLuggage;
+
+              return (
+                <div key={ride.id || ride.rideId} className="ride-option-card">
+                  <div className="ride-option-header">
+                    <div>
+                      <b style={{ fontSize: 15, display: "block", color: "var(--ink)" }}>
+                        {isOut ? `CIT Campus → ${dest}` : `${dest} → CIT Campus`}
+                      </b>
+                      <span style={{ fontSize: 12.5, color: "var(--muted)" }}>
+                        ⏰ {isOut ? "Leaves" : "Arrives"} {ride.departureTime || ride.time || "4:00 PM"} · {ride.departureDate || ride.date || "Today"}
+                      </span>
+                    </div>
+
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+                      <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: "9999px", background: "var(--blue-soft)", color: "var(--blue)" }}>
+                        {ride.vehicleType || "Prime Sedan"}
+                      </span>
+                      {ride.isFemaleOnly || ride.fem ? (
+                        <span style={{ fontSize: 10.5, fontWeight: 700, color: "#C2185B", background: "#FCE4EC", padding: "2px 6px", borderRadius: "9999px" }}>
+                          🌸 Female-Only
+                        </span>
+                      ) : null}
+                    </div>
+                  </div>
+
+                  {/* Rider avatars & capacity statistics */}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 8, paddingTop: 8, borderTop: "1px solid var(--line)" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <div className="rider-avatar-stack">
+                        {paxList.slice(0, 4).map((p, pIdx) => (
+                          <div key={p.uid || p.name || pIdx} className="rider-avatar-mini" title={p.name}>
+                            {p.name ? p.name[0].toUpperCase() : "U"}
+                          </div>
+                        ))}
+                      </div>
+                      <span style={{ fontSize: 12, color: "var(--muted)" }}>
+                        <b>{paxCount}/{maxPassengers}</b> riders · <b>{currentLuggage}/{maxLuggage}</b> luggage pts
+                      </span>
+                    </div>
+
+                    {isCurrentLobby ? (
+                      <span style={{ fontSize: 12, fontWeight: 700, color: "var(--green)" }}>
+                        ✓ Joined
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        className="btn-primary"
+                        style={{
+                          width: "auto",
+                          minHeight: 34,
+                          padding: "0 14px",
+                          fontSize: 12.5,
+                          background: isFull ? "#9AA0A6" : "var(--blue)",
+                          boxShadow: "none"
+                        }}
+                        disabled={isFull}
+                        onClick={() => onJoinRide(ride)}
+                      >
+                        {isFull ? "Full" : "Join Pool"}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
-
-      {/* Action Bar (Chat & Pay + Vote Moderation) */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 18 }}>
-        <button 
-          type="button" 
-          className="btn-google"
-          style={{ minHeight: 46, fontSize: 13.5 }}
-          onClick={onOpenChat}
-        >
-          <span>💬</span> Chat &amp; QR
-        </button>
-
-        <button 
-          type="button" 
-          className="btn-google"
-          style={{ minHeight: 46, fontSize: 13.5 }}
-          onClick={onOpenVote}
-        >
-          <span>⚖️</span> Vote Out
-        </button>
-      </div>
-
-      <button 
-        type="button"
-        style={{ width: "100%", marginTop: 12, padding: "8px", color: "var(--muted)", background: "none", border: "none", fontSize: 12.5, cursor: "pointer", textDecoration: "underline" }}
-        onClick={onLeaveLobby}
-      >
-        Leave this cab pool
-      </button>
     </section>
   );
 }
