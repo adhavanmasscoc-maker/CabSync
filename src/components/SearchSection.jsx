@@ -25,15 +25,6 @@ export default function SearchSection({
     });
   };
 
-  const handleFemaleToggle = (e) => {
-    const isChecked = e.target.checked;
-    if (isChecked && !verified) {
-      onOpenCam();
-    } else {
-      setSearchState(prev => ({ ...prev, femaleOnly: isChecked }));
-    }
-  };
-
   const todayStr = new Date().toISOString().split("T")[0];
 
   return (
@@ -183,23 +174,7 @@ export default function SearchSection({
         Your luggage: <b>{totalPts} {totalPts === 1 ? "point" : "points"}</b>
       </div>
 
-      {/* Female-Only Pool */}
-      <div className="toggle-row">
-        <div>
-          <b style={{ fontSize: 14 }}>Enable Female-Only Pool</b>
-          <small style={{ display: "block", color: "var(--muted)", fontSize: 12 }}>
-            {verified ? "✓ Verified CIT ID" : "Verify with quick ID scan"}
-          </small>
-        </div>
-        <label className="switch-wrap">
-          <input 
-            type="checkbox" 
-            checked={femaleOnly}
-            onChange={handleFemaleToggle}
-          />
-          <span className="slider" />
-        </label>
-      </div>
+
 
       {error && (
         <div style={{ color: "var(--red)", fontSize: 13, fontWeight: 600, marginTop: 10, textAlign: "center" }}>

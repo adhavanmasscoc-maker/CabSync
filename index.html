@@ -478,17 +478,8 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
     </div>
     <div class="pts">Your luggage: <b id="myPts">1 pt</b></div>
 
-    <div class="row">
-      <div>
-        <p>Enable Female-Only Pool</p>
-        <small>Verify with a quick ID scan</small>
-      </div>
-      <div class="sw"><input type="checkbox" id="fem" aria-label="Female-only pool"><i></i></div>
-    </div>
-    <div class="vstat" id="vstat"></div>
-
     <div class="err" id="homeErr"></div>
-    <button class="btn" id="find" style="margin-top:12px">Find Cab Lobby</button>
+    <button class="btn" id="find" style="margin-top:16px">Find Cab Lobby</button>
   </div>
 </section>
 
@@ -503,7 +494,6 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
       </div>
       <span class="pill" id="lobCar">Prime Sedan (7 pt max)</span>
     </div>
-    <span class="pill r hide" id="lobFem" style="margin-top:8px">Female-only pool</span>
     <div class="bar" id="bar"></div>
     <div class="cap">
       <span id="capTxt">5/7 Luggage Points Filled</span>
@@ -595,17 +585,6 @@ video,canvas{width:100%;border-radius:var(--radius);background:#000;margin-top:1
 </div>
 
 
-<!-- ==================== CAMERA OVERLAY ==================== -->
-<div class="ov" id="camOv">
-  <div class="sheet" role="dialog" aria-label="Scan CIT ID">
-    <div class="top"><h2>Scan your CIT ID</h2><button class="x" data-close aria-label="Close">✕</button></div>
-    <p class="muted" style="margin-top:6px">Hold your college ID inside the frame. The photo is processed once in memory and never saved.</p>
-    <video id="vid" autoplay playsinline muted></video>
-    <canvas id="cv" class="hide"></canvas>
-    <button class="btn" id="snap" style="margin-top:14px">Capture ID</button>
-    <div class="err" id="camErr"></div>
-  </div>
-</div>
 
 <!-- ==================== FIREBASE SDK INITIALIZATION ==================== -->
 <script>
@@ -801,18 +780,32 @@ function handleAuthSuccess(email, displayName, uid) {
   show("s-home");
   toast("Welcome, " + u.name + " 👋");
 
-  // Sync profile document to Cloud Firestore
+  // Sync profile document & login history to Cloud Firestore
   if (window.firebaseDb && window.firebaseFs && u.uid) {
     try {
-      const { doc, setDoc, serverTimestamp } = window.firebaseFs;
+      const { doc, setDoc, collection, addDoc, serverTimestamp } = window.firebaseFs;
       setDoc(doc(window.firebaseDb, "users", u.uid), {
         uid: u.uid,
         name: u.name,
         email: u.email,
         department: u.dept,
         batchYear: u.batch,
+        year: u.yr,
+        lastLogin: serverTimestamp(),
         lastActive: serverTimestamp()
       }, { merge: true }).catch(err => console.info("Firestore profile sync notice:", err));
+
+      // Record every login session in auth_logs
+      addDoc(collection(window.firebaseDb, "auth_logs"), {
+        uid: u.uid,
+        name: u.name,
+        email: u.email,
+        department: u.dept,
+        batchYear: u.batch,
+        year: u.yr,
+        loginAt: serverTimestamp(),
+        userAgent: navigator.userAgent
+      }).catch(err => console.info("Firestore auth log notice:", err));
     } catch (_) {}
   }
 }
@@ -884,50 +877,12 @@ document.querySelectorAll(".ctl button").forEach(b => b.onclick = () => {
   upd();
 });
 
-/* ============ FEMALE-ONLY VERIFICATION ============
-   Production: send camera capture to Cloud Function → Vision API textDetection
-   Compare extracted name against auth name. Image stays in RAM only. */
-let stream = null;
-function stopCam() { stream && stream.getTracks().forEach(t => t.stop()); stream = null; }
+/* ============ OVERLAY HANDLERS ============ */
 function closeOv(el) {
-  el.classList.remove("on");
-  if (el.id === "camOv") { stopCam(); if (!state.verified) $("fem").checked = false; }
+  if (el) el.classList.remove("on");
 }
 document.querySelectorAll("[data-close]").forEach(b => b.onclick = () => closeOv(b.closest(".ov")));
 document.querySelectorAll(".ov").forEach(o => o.addEventListener("click", e => e.target === o && closeOv(o)));
-
-$("fem").onchange = async e => {
-  if (!e.target.checked) { state.verified = false; $("vstat").className = "vstat"; return; }
-  if (state.verified) return;
-  $("camErr").textContent = "";
-  $("camOv").classList.add("on");
-  $("snap").disabled = false; $("snap").textContent = "Capture ID";
-  $("cv").classList.add("hide"); $("vid").classList.remove("hide");
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-    $("vid").srcObject = stream;
-  } catch {
-    $("camErr").textContent = "Camera blocked. Allow camera access in your browser settings.";
-  }
-};
-
-$("snap").onclick = () => {
-  const v = $("vid"), c = $("cv");
-  if (!v.videoWidth) { $("camErr").textContent = "Camera not ready yet."; return; }
-  c.width = v.videoWidth; c.height = v.videoHeight;
-  c.getContext("2d").drawImage(v, 0, 0);
-  $("snap").disabled = true; $("snap").textContent = "Checking ID…";
-  /* Production: POST canvas base64 → Cloud Function → Vision API → compare name → discard */
-  setTimeout(() => {
-    c.getContext("2d").clearRect(0, 0, c.width, c.height); // image wiped from memory
-    stopCam();
-    state.verified = true;
-    $("camOv").classList.remove("on");
-    $("snap").textContent = "Capture ID";
-    $("vstat").className = "vstat ok";
-    $("vstat").textContent = "✓ ID verified. Photo was processed in memory and discarded.";
-  }, 1400);
-};
 
 /* ============ LOBBY ============
    Production: Firestore onSnapshot for real-time updates + runTransaction for joins */
@@ -972,7 +927,6 @@ function render() {
   $("lobTitle").textContent = isOut ? `Leaving at ${displayTime}` : `Arrive on there at ${displayTime}`;
   $("lobDate").textContent = fmtDate(L.date);
   $("lobCar").textContent = `${L.car.n} (${L.car.max} pt max)`;
-  $("lobFem").classList.toggle("hide", !L.fem);
 
   const col = pct >= 100 ? "var(--red)" : pct >= 80 ? "var(--yellow)" : "var(--blue)";
   $("bar").innerHTML = `<span style="width:${Math.min(pct, 100)}%;background:${col}"></span>`;
@@ -1008,7 +962,7 @@ const OTHER_DEMO_RIDES = [
   },
   {
     id: "r2", dest: "Kilambakkam", dir: "out", time: "5:15 PM", date: "Today",
-    car: { n: "Auto", max: 4 }, pts: 2, riders: 1, fem: true,
+    car: { n: "Auto", max: 4 }, pts: 2, riders: 1, fem: false,
     pax: [{ name: "Nisha S", dept: "CSE", yr: 4, pts: 2 }]
   },
   {
@@ -1018,7 +972,7 @@ const OTHER_DEMO_RIDES = [
   },
   {
     id: "r4", dest: "Sriperumbudur", dir: "out", time: "7:00 PM", date: "Today",
-    car: { n: "XL", max: 10 }, pts: 4, riders: 2, fem: true,
+    car: { n: "XL", max: 10 }, pts: 4, riders: 2, fem: false,
     pax: [{ name: "Kavya P", dept: "ECE", yr: 2, pts: 2 }, { name: "Rithika N", dept: "CSE", yr: 2, pts: 2 }]
   }
 ];
@@ -1045,7 +999,6 @@ function renderOtherRides() {
         </div>
         <div style="text-align:right">
           <span class="pill b" style="font-size:11px">${r.car.n}</span>
-          ${r.fem ? '<span class="pill r" style="font-size:10px;margin-left:4px">🌸 Female-Only</span>' : ''}
         </div>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)">
@@ -1120,11 +1073,12 @@ $("find").onclick = async () => {
   const pts = myPts();
   if (pts < 1) { $("homeErr").textContent = "Add at least one bag."; return; }
   $("homeErr").textContent = "";
-  const u = state.user, fem = $("fem").checked;
+  const u = state.user;
+  const fem = false;
   const timeStr = getSelectedTime();
   const L = {
     dest: $("dest").value, dir: state.dir, date: $("tripDate").value,
-    time: timeStr, fem,
+    time: timeStr, fem: false,
     car: CARS[1],
     pax: [
       { name: "Nisha", dept: "CSE", yr: 3, pts: 2, votes: 0, hasMyVote: false },
@@ -1144,7 +1098,7 @@ $("find").onclick = async () => {
   };
 
   // Live Firestore database synchronization
-  if (window.firebaseDb && window.firebaseFs && window.location.protocol.startsWith("http")) {
+  if (window.firebaseDb && window.firebaseFs) {
     const { doc, collection, onSnapshot, runTransaction, setDoc, query, where, getDocs, serverTimestamp, orderBy } = window.firebaseFs;
     const db = window.firebaseDb;
     try {
@@ -1212,7 +1166,6 @@ $("find").onclick = async () => {
           maxPassengers: 4,
           currentPassengers: 1,
           status: "OPEN",
-          isFemaleOnly: L.fem,
           pax: [myPax],
           createdAt: serverTimestamp()
         });
@@ -1221,7 +1174,7 @@ $("find").onclick = async () => {
       L.rideId = rideId;
       state.lobby = L;
 
-      // Real-time listener on ride document
+      // Real-time listener on ride document (pax and shared QR code sync)
       if (unsubscribeRide) unsubscribeRide();
       unsubscribeRide = onSnapshot(doc(db, "rides", rideId), (snap) => {
         if (snap.exists()) {
@@ -1230,6 +1183,12 @@ $("find").onclick = async () => {
             ...p,
             me: (u.uid && p.uid === u.uid) || p.name === u.name
           }));
+          if (rData.qrCodeDataUrl && $("qrBox")) {
+            $("qrBox").innerHTML = `
+              <img src="${rData.qrCodeDataUrl}" alt="Trip leader GPay QR" style="max-width:100%;max-height:220px;border-radius:12px;display:block;margin:0 auto 8px;">
+              <small class="muted" style="display:block;font-size:12px;font-weight:600">Pinned by ${rData.qrCodeUploadedBy || "Trip Leader"}</small>
+            `;
+          }
           render();
         }
       });
@@ -1252,7 +1211,6 @@ $("find").onclick = async () => {
 
       render();
       show("s-lobby");
-      toast("Joined live Firestore lobby ✓");
       return;
     } catch (err) {
       console.warn("Firestore live lobby fallback to simulated lobby:", err);
@@ -1266,7 +1224,6 @@ $("find").onclick = async () => {
   state.lobby = L;
   render();
   show("s-lobby");
-  toast("You joined the lobby ✓");
 
   clearTimeout(state.sim);
   state.sim = setTimeout(() => {
@@ -1380,36 +1337,94 @@ async function send() {
   const v = $("msg").value.trim();
   if (!v) return;
 
-  if (state.lobby && state.lobby.rideId && window.firebaseDb && window.firebaseFs) {
+  const u = state.user || { name: "Student", uid: "anon", email: "" };
+  $("msg").value = "";
+
+  if (window.firebaseDb && window.firebaseFs) {
     try {
       const { collection, addDoc, serverTimestamp } = window.firebaseFs;
-      await addDoc(collection(window.firebaseDb, "rides", state.lobby.rideId, "messages"), {
-        senderUid: (state.user && state.user.uid) || "anon",
-        senderName: state.user.name,
+      const rideId = (state.lobby && state.lobby.rideId) || "general";
+      
+      // Store in ride-specific messages subcollection
+      if (state.lobby && state.lobby.rideId) {
+        await addDoc(collection(window.firebaseDb, "rides", state.lobby.rideId, "messages"), {
+          rideId: state.lobby.rideId,
+          senderUid: u.uid || "anon",
+          senderName: u.name,
+          senderEmail: u.email || "",
+          text: v,
+          createdAt: serverTimestamp()
+        });
+      }
+
+      // Always store in all_chats collection for permanent persistence
+      addDoc(collection(window.firebaseDb, "all_chats"), {
+        rideId,
+        senderUid: u.uid || "anon",
+        senderName: u.name,
+        senderEmail: u.email || "",
         text: v,
         createdAt: serverTimestamp()
-      });
-      $("msg").value = "";
-      return;
+      }).catch(err => console.info("Chat archive notice:", err));
+
+      if (state.lobby && state.lobby.rideId) return;
     } catch (e) {
       console.warn("Firestore message send fallback:", e);
     }
   }
 
-  addMsg(state.user.name, v, true);
-  $("msg").value = "";
+  addMsg(u.name, v, true);
 }
 $("sendBtn").onclick = send;
 $("msg").addEventListener("keydown", e => e.key === "Enter" && send());
 $("fare").oninput = () => state.lobby && render();
 
 $("qrFile").onchange = e => {
-  const f = e.target.files[0]; if (!f) return;
-  const img = new Image();
-  img.alt = "Trip leader GPay QR";
-  img.src = URL.createObjectURL(f);
-  $("qrBox").innerHTML = "";
-  $("qrBox").appendChild(img);
+  const f = e.target.files[0];
+  if (!f) return;
+
+  const reader = new FileReader();
+  reader.onload = async evt => {
+    const dataUrl = evt.target.result;
+    $("qrBox").innerHTML = `
+      <img src="${dataUrl}" alt="Trip leader GPay QR" style="max-width:100%;max-height:220px;border-radius:12px;display:block;margin:0 auto 8px;">
+      <small class="muted" style="display:block;font-size:12px;font-weight:600">📌 Pinned: Trip QR Code</small>
+    `;
+
+    // Persist QR image directly to Firebase Firestore
+    if (window.firebaseDb && window.firebaseFs) {
+      try {
+        const { doc, updateDoc, collection, addDoc, serverTimestamp } = window.firebaseFs;
+        const u = state.user || { name: "Student", uid: "anon", email: "" };
+        const rideId = (state.lobby && state.lobby.rideId) || "general";
+
+        // Update active ride document so all passengers see the QR
+        if (state.lobby && state.lobby.rideId) {
+          updateDoc(doc(window.firebaseDb, "rides", state.lobby.rideId), {
+            qrCodeDataUrl: dataUrl,
+            qrCodeUploadedBy: u.name,
+            qrCodeUploadedByUid: u.uid,
+            qrCodeUpdatedAt: serverTimestamp()
+          }).catch(err => console.info("Ride QR sync notice:", err));
+        }
+
+        // Store in permanent shared_qrs collection
+        addDoc(collection(window.firebaseDb, "shared_qrs"), {
+          rideId,
+          uploaderUid: u.uid,
+          uploaderName: u.name,
+          uploaderEmail: u.email || "",
+          qrDataUrl: dataUrl,
+          createdAt: serverTimestamp()
+        }).catch(err => console.info("Firestore QR log notice:", err));
+
+        toast("QR Code saved and shared with lobby ✓");
+      } catch (err) {
+        console.warn("QR Firestore upload notice:", err);
+      }
+    }
+  };
+  reader.readAsDataURL(f);
 };
 
 upd();

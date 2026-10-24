@@ -45,7 +45,7 @@ export default function LobbySection({
           <div className="lobby-header-bar">
             <div>
               <span style={{ fontSize: 12, fontWeight: 700, color: "var(--blue)", textTransform: "uppercase" }}>
-                {lobby.fem ? "🌸 Female-Only Pool" : "Your Active Cab Pool"}
+                Your Active Cab Pool
               </span>
               <h2 style={{ fontSize: 18, fontWeight: 800 }}>
                 {lobby.dir === "out" ? `CIT Campus → ${lobby.dest}` : `${lobby.dest} → CIT Campus`}
@@ -212,11 +212,6 @@ export default function LobbySection({
                       <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: "9999px", background: "var(--blue-soft)", color: "var(--blue)" }}>
                         {ride.vehicleType || "Prime Sedan"}
                       </span>
-                      {ride.isFemaleOnly || ride.fem ? (
-                        <span style={{ fontSize: 10.5, fontWeight: 700, color: "#C2185B", background: "#FCE4EC", padding: "2px 6px", borderRadius: "9999px" }}>
-                          🌸 Female-Only
-                        </span>
-                      ) : null}
                     </div>
                   </div>
 

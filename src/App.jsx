@@ -82,7 +82,7 @@ const getInitialDemoRides = (todayStr) => [
     maxPassengers: 3,
     currentPassengers: 1,
     status: "OPEN",
-    isFemaleOnly: true,
+    isFemaleOnly: false,
     pax: [
       { name: "Nisha S", dept: "CSE", yr: 4, pts: 2, votes: 0, hasMyVote: false }
     ]
@@ -121,7 +121,7 @@ const getInitialDemoRides = (todayStr) => [
     maxPassengers: 6,
     currentPassengers: 2,
     status: "OPEN",
-    isFemaleOnly: true,
+    isFemaleOnly: false,
     pax: [
       { name: "Kavya P", dept: "ECE", yr: 2, pts: 2, votes: 0, hasMyVote: false },
       { name: "Rithika N", dept: "CSE", yr: 2, pts: 2, votes: 0, hasMyVote: false }
@@ -674,8 +674,18 @@ export default function App() {
         onUploadQr={(e) => {
           const file = e.target.files[0];
           if (file) {
-            setQrCodeUrl(URL.createObjectURL(file));
-            showToast("Trip QR pinned successfully ✓");
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+              const dataUrl = evt.target.result;
+              setQrCodeUrl(dataUrl);
+              showToast("Trip QR pinned successfully ✓");
+              if (lobby && lobby.rideId) {
+                const rideRef = doc(db, "rides", lobby.rideId);
+                setDoc(rideRef, { qrCodeDataUrl: dataUrl, qrCodeUploadedBy: user ? user.name : "Student" }, { merge: true })
+                  .catch(() => {});
+              }
+            };
+            reader.readAsDataURL(file);
           }
         }}
       />
