@@ -1,0 +1,60 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper: Enforce verified CIT Chennai institutional account
+    function isCitStudent() {
+      return request.auth != null &&
+             request.auth.token.email.matches('.*@citchennai[.]net$');
+    }
+
+    // Helper: Verify if user is participant of a specific ride
+    function isRideParticipant(rideId) {
+      return exists(/databases/$(database)/documents/rides/$(rideId)/participants/$(request.auth.uid));
+    }
+
+    // User Profile collection:
+    // Read: Any verified CIT student
+    // Write: Strictly the document owner
+    match /users/{userId} {
+      allow read: if isCitStudent();
+      allow create, update: if isCitStudent() && request.auth.uid == userId;
+      allow delete: if false;
+    }
+
+    // Rides collection:
+    // Read: All authenticated CIT students
+    // Create: Verified CIT student (set as leader)
+    // Update: Handled via transactions or Cloud Functions
+    match /rides/{rideId} {
+      allow read: if isCitStudent();
+      allow create: if isCitStudent() && request.resource.data.leaderUid == request.auth.uid;
+      allow update: if isCitStudent();
+      allow delete: if isCitStudent() && resource.data.leaderUid == request.auth.uid;
+
+      // Sub-collection: Participants
+      match /participants/{participantId} {
+        allow read: if isCitStudent();
+        allow create, update: if isCitStudent() && participantId == request.auth.uid;
+        allow delete: if isCitStudent() && (participantId == request.auth.uid || get(/databases/$(database)/documents/rides/$(rideId)).data.leaderUid == request.auth.uid);
+      }
+
+      // Sub-collection: Ephemeral Chat Messages
+      // Only confirmed ride participants can read and send messages.
+      // Messages are immutable once sent until scheduled 1-hr TTL wipe.
+      match /messages/{messageId} {
+        allow read: if isCitStudent() && isRideParticipant(rideId);
+        allow create: if isCitStudent() && isRideParticipant(rideId) && request.resource.data.senderUid == request.auth.uid;
+        allow update, delete: if false;
+      }
+    }
+
+    // Female Peer-Vouch collection for Pending State fallback
+    match /female_vouches/{vouchHash} {
+      allow read: if isCitStudent();
+      allow create: if isCitStudent() && request.resource.data.targetUid == request.auth.uid;
+      allow update: if isCitStudent() &&
+                    get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isFemaleVerified == true;
+    }
+  }
+}
